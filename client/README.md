@@ -21,5 +21,5 @@ Para ver el proyecto construido, ejecutar el siguiente comando:
 ```
 
 > [!NOTE]
-> Estos comandos no inician el servidor.
+> Estos comandos no inician el servidor backend.
 > Para otros comandos, ve a la [lista](../README.md) de los scripts principales
