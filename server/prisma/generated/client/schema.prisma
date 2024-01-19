@@ -1,0 +1,28 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "./generated/client"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("MYSQL_DATABASE_URL")
+}
+
+// Definición de la tabla para los jugadores/as
+model Player {
+    id        Int      @id @default(autoincrement())
+    name      String
+    createdAt DateTime @default(now())
+    rolls     Roll[]
+}
+
+// Definición de la tabla para las tiradas de dados
+model Roll {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    dice1     Int
+    dice2     Int
+    isWinner  Boolean
+    playerId  Int
+    player    Player   @relation(fields: [playerId], references: [id])
+}

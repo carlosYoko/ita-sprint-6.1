@@ -1,0 +1,22 @@
+{
+  "name": "sprint-6.1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "cd server && npm test",
+    "build:project": "npm run build:frontend && npm run build:server",
+    "build:server": "cd server && npm run build",
+    "build:frontend": "cd client && npm run build",
+    "start:sql": "node server/dist/mysql/app.js",
+    "start:mongodb": "node server/dist/mongodb/app.js",
+    "start:frontend": "cd client && npm run preview"
+  },
+  "keywords": [],
+  "authors": [
+    "Gabriel",
+    "Solida",
+    "Carlos Gimenez <carlosgibe@gmail.com>"
+  ],
+  "license": "MIT"
+}
