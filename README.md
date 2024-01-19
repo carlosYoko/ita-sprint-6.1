@@ -20,6 +20,8 @@ Juego de dados utilizando las siguientes tecnologías:
 
 ##### Trabajo del Sprint 6.1 de IT-Academy en la especialización de Node.js.
 
+#### Lista de comandos a ejecutar en orden:
+
 Para instalar todas las dependencias, ejecutar el siguiente comando:
 
 ```bash
@@ -38,25 +40,25 @@ Para instalar y ejecutar virtualización de entorno para desarrollo (Docker), ej
   npm run docker
 ```
 
-Para aplicar migraciones en el entorno de desarrollo, utiliza el siguiente comando:
-
-```bash
-  npm run prisma-migrate
-```
-
-Para generar el código TypeScript relacionado con tu modelo, utiliza el siguiente comando:
+Para generar la migración, utiliza el siguiente comando:
 
 ```bash
   npm run prisma-generate
 ```
 
-Para iniciar API MySQL, ejecutar el siguiente comando en otra terminal apuntando a la raiz del proyecto:
+Para aplicar la migración en el entorno de desarrollo, utiliza el siguiente comando:
+
+```bash
+  npm run prisma-migrate
+```
+
+Para iniciar el servidor MySQL, ejecutar el siguiente comando en otra terminal apuntando a la raiz del proyecto:
 
 ```bash
   npm run start:sql
 ```
 
-Para iniciar API MongoDB, ejecutar el siguiente comando en otra terminal apuntando a la raiz del proyecto:
+Para iniciar el servidor MongoDB, ejecutar el siguiente comando en otra terminal apuntando a la raiz del proyecto:
 
 ```bash
   npm run start:mongodb
