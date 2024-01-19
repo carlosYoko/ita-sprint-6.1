@@ -1,12 +1,23 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  mysql:
-    image: mariadb:latest
-    environment:
-      MYSQL_DATABASE_URL: ${MYSQL_DATABASE_URL}
-      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}      
+  miapp:
+    image: node
+    container_name: serversprint6
     ports:
-      - "3306:3306"
-    volumes:
-      - ./mysql_data:/var/lib/mysql
+      - 5000:3000
+    build: .
+    # command: node server.js
+  mysql_db:
+    image: mariadb:latest
+    container_name: some-mariadb
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  mongo_db:
+    image: mongo:latest
+    container_name: mymongoserver
+    ports:
+      - 27017:27017
+

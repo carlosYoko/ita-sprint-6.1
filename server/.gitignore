@@ -2,3 +2,5 @@ node_modules/
 dist/
 coverage/
 .vscode/
+prisma/generated/
+prisma/migrations/

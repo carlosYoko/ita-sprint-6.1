@@ -140,8 +140,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": "../../../.env"
   },
   "relativePath": "../..",
   "clientVersion": "5.8.1",
@@ -150,6 +149,7 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -159,7 +159,8 @@ const config = {
     }
   },
   "inlineSchema": "Z2VuZXJhdG9yIGNsaWVudCB7CiAgICBwcm92aWRlciA9ICJwcmlzbWEtY2xpZW50LWpzIgogICAgb3V0cHV0ICAgPSAiLi9nZW5lcmF0ZWQvY2xpZW50Igp9CgpkYXRhc291cmNlIGRiIHsKICAgIHByb3ZpZGVyID0gIm15c3FsIgogICAgdXJsICAgICAgPSBlbnYoIk1ZU1FMX0RBVEFCQVNFX1VSTCIpCn0KCi8vIERlZmluaWNpw7NuIGRlIGxhIHRhYmxhIHBhcmEgbG9zIGp1Z2Fkb3Jlcy9hcwptb2RlbCBQbGF5ZXIgewogICAgaWQgICAgICAgIEludCAgICAgIEBpZCBAZGVmYXVsdChhdXRvaW5jcmVtZW50KCkpCiAgICBuYW1lICAgICAgU3RyaW5nCiAgICBjcmVhdGVkQXQgRGF0ZVRpbWUgQGRlZmF1bHQobm93KCkpCiAgICByb2xscyAgICAgUm9sbFtdCn0KCi8vIERlZmluaWNpw7NuIGRlIGxhIHRhYmxhIHBhcmEgbGFzIHRpcmFkYXMgZGUgZGFkb3MKbW9kZWwgUm9sbCB7CiAgICBpZCAgICAgICAgSW50ICAgICAgQGlkIEBkZWZhdWx0KGF1dG9pbmNyZW1lbnQoKSkKICAgIGNyZWF0ZWRBdCBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKICAgIGRpY2UxICAgICBJbnQKICAgIGRpY2UyICAgICBJbnQKICAgIGlzV2lubmVyICBCb29sZWFuCiAgICBwbGF5ZXJJZCAgSW50CiAgICBwbGF5ZXIgICAgUGxheWVyICAgQHJlbGF0aW9uKGZpZWxkczogW3BsYXllcklkXSwgcmVmZXJlbmNlczogW2lkXSkKfQo=",
-  "inlineSchemaHash": "84ef64d0d160d24dc9800eaf98abb608011b1945117ad5270f8459d28c1073be"
+  "inlineSchemaHash": "84ef64d0d160d24dc9800eaf98abb608011b1945117ad5270f8459d28c1073be",
+  "noEngine": false
 }
 config.dirname = '/'
 
