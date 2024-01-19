@@ -20,13 +20,19 @@ Juego de dados utilizando las siguientes tecnologías:
 
 ##### Trabajo del Sprint 6.1 de IT-Academy en la especialización de Node.js.
 
+Para instalar todas las dependencias, ejecutar el siguiente comando:
+
+```bash
+  npm run install-allDependencies
+```
+
 Para transpilar frontend y backend, ejecutar el siguiente comando:
 
 ```bash
   npm run build:project
 ```
 
-Para instalar y ejecutar virtualización de entorno (Docker), ejecutar el siguiente comando:
+Para instalar y ejecutar virtualización de entorno para desarrollo (Docker), ejecutar el siguiente comando:
 
 ```bash
   npm run docker
