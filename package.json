@@ -6,6 +6,9 @@
   "scripts": {
     "test": "cd server && npm test",
     "build:project": "npm run build:frontend && npm run build:server",
+    "docker": "cd server && docker-compose up",
+    "prisma-migrate": "npx prisma migrate dev",
+    "prisma-generate": "npx prisma generate",
     "build:server": "cd server && npm run build",
     "build:frontend": "cd client && npm run build",
     "start:sql": "node server/dist/mysql/app.js",

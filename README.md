@@ -26,19 +26,37 @@ Para transpilar frontend y backend, ejecutar el siguiente comando:
   npm run build:project
 ```
 
-Para iniciar servidor MySQL, ejecutar el siguiente comando:
+Para instalar y ejecutar virtualización de entorno (Docker), ejecutar el siguiente comando:
+
+```bash
+  npm run docker
+```
+
+Para aplicar migraciones en el entorno de desarrollo, utiliza el siguiente comando:
+
+```bash
+  npm run prisma-migrate
+```
+
+Para generar el código TypeScript relacionado con tu modelo, utiliza el siguiente comando:
+
+```bash
+  npm run prisma-generate
+```
+
+Para iniciar API MySQL, ejecutar el siguiente comando en otra terminal apuntando a la raiz del proyecto:
 
 ```bash
   npm run start:sql
 ```
 
-Para iniciar servidor MongoDB, ejecutar el siguiente comando:
+Para iniciar API MongoDB, ejecutar el siguiente comando en otra terminal apuntando a la raiz del proyecto:
 
 ```bash
   npm run start:mongodb
 ```
 
-Para iniciar frontend, ejecutar el siguiente comando:
+Para iniciar frontend, ejecutar el siguiente comando en otra terminal apuntando a la raiz del proyecto:
 
 ```bash
   npm run start:frontend
