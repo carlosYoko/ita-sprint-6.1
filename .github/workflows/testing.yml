@@ -9,6 +9,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mariadb:latest
+        container_name: mymariadbserver
+        ports:
+          - 3306:3306
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: dados
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -21,5 +32,20 @@ jobs:
       - name: Install dependencies
         run: npm install && cd server && npm install
 
+      - name: Set up environment variables
+        run: |
+          echo "REACT_APP_API_URL=http://localhost:3000" >> client/.env
+          echo "NODE_ENV=development" >> client/.env
+          echo "MYSQL_DATABASE_URL=mysql://root:root@localhost:3306/dados" >> server/.env
+
+      - name: Run Prisma migrations
+        run: cd server && npx prisma migrate deploy
+
+      - name: Start Docker container
+        run: cd server && docker-compose up -d
+
       - name: Run tests
         run: npm run test
+
+      - name: Stop Docker container
+        run: cd server && docker-compose down
