@@ -23,9 +23,9 @@ jobs:
 
       - name: Build Docker Images
         run: |
-          docker build -t carlosgibe/node:dev ./ruta-de-tu-app
-          docker build -t carlosgibe/mariadb:dev ./ruta-de-tu-mysql-db
-          docker build -t carlosgibe/mongo:dev ./ruta-de-tu-mongo-db
+          docker build -t carlosgibe/node:dev ./server
+          docker build -t carlosgibe/mariadb:dev ./server
+          docker build -t carlosgibe/mongo:dev ./server
 
       - name: Log in to DockerHub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
