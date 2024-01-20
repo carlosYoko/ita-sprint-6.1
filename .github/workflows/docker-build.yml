@@ -32,7 +32,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          password-stdin: true
 
       - name: Push Docker Images to DockerHub
         run: |
