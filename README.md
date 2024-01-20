@@ -1,3 +1,5 @@
+# ⚠️ APP EN DESARROLLO ⚠️
+
 # Juego de Dados
 
 Juego de dados utilizando las siguientes tecnologías:
