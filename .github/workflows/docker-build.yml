@@ -28,6 +28,12 @@ jobs:
         run: |
           cd server && docker-compose up -d
 
+      - name: Install Dependencies and Prisma
+        run: |
+          cd server && npm run install-allDependencies
+          cd server && npm run prisma-migrate
+          cd server && npm run prisma-generate
+
       - name: Run Tests
         run: |
           cd server && npm run test
