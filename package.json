@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "cd server && npm test",
+    "install-allDependencies": "npm run installDepServer && npm run installDepClient",
+    "installDepServer": "cd server && npm i",
+    "installDepClient": "cd client && npm i",
     "build:project": "npm run build:frontend && npm run build:server",
     "docker": "cd server && docker-compose up",
     "prisma-migrate": "cd server && npx prisma migrate",
