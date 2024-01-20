@@ -10,7 +10,7 @@ services:
     # command: node server.js
   mysql_db:
     image: mariadb:latest
-    container_name: some-mariadb
+    container_name: mymariadbserver
     ports:
       - 3306:3306
     environment:

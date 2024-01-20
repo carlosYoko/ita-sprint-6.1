@@ -7,14 +7,34 @@ app.use(express.json());
 
 const prisma = new PrismaClient();
 
+/**
+ * Endpoints players
+ */
 // Endpoint para crear un jugador
 app.post('/players', async (req, res) => {
   try {
     const { name } = req.body;
 
+    // Verificar si ya existe un jugador con el mismo nombre
+    const existingPlayer = await prisma.player.findFirst({
+      where: {
+        name: name.trim(),
+        NOT: {
+          name: 'ANONIMO',
+        },
+      },
+    });
+
+    if (existingPlayer) {
+      return res
+        .status(400)
+        .send({ message: 'Ya existe un jugador con este nombre!' });
+    }
+
+    // Si no existe el jugador crea un nuevo jugador
     const newPlayer = await prisma.player.create({
       data: {
-        name: name || 'ANONIMO',
+        name: name.trim() || 'ANONIMO',
       },
     });
 
@@ -31,7 +51,7 @@ app.put('/players/:id', async (req, res) => {
     const playerId = Number(req.params.id);
     const { name } = req.body;
 
-    // Actualizar el nombre del jugador/a en la base de datos
+    // Actualizar el nombre del jugador en la base de datos
     const updatedPlayer = await prisma.player.update({
       where: {
         id: playerId,
@@ -52,7 +72,7 @@ app.put('/players/:id', async (req, res) => {
   }
 });
 
-// Endpoint para devolver lista jugadores con porcentaje de éxitos:
+// Endpoint para devolver lista jugadores con porcentaje de exitos:
 app.get('/players', async (_req, res) => {
   type RollType = {
     dice1: number;
@@ -66,6 +86,7 @@ app.get('/players', async (_req, res) => {
     rolls: RollType[];
   };
 
+  // Obtiene todos los jugadores junto con sus tiradas
   try {
     const allPlayers = await prisma.player.findMany({
       include: {
@@ -97,6 +118,79 @@ app.get('/players', async (_req, res) => {
   }
 });
 
+/**
+ * Endpoints players
+ */
+// Endpoint para realizar una tirada
+app.post('/games/:id', async (req, res) => {
+  try {
+    const playerId = Number(req.params.id);
+
+    // Realizar la tirada de dos dados
+    const dice1 = Math.floor(Math.random() * 6) + 1;
+    const dice2 = Math.floor(Math.random() * 6) + 1;
+    const total = dice1 + dice2;
+    const win = total === 7;
+
+    // Almacenar la tirada en la base de datos
+    const rollDiceResult = await prisma.roll.create({
+      data: {
+        dice1: dice1,
+        dice2: dice2,
+        isWinner: win,
+        playerId: playerId,
+      },
+    });
+
+    res.status(201).send(rollDiceResult);
+  } catch (error) {
+    console.error('Error al realizar la tirada:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
+
+// Endpoint para obtener todas las tiradas de un jugador
+app.get('/games/:id', async (req, res) => {
+  try {
+    const playerId = Number(req.params.id);
+
+    // Obtener la lista de tiradas por un jugador
+    const playerRolls = await prisma.roll.findMany({
+      where: {
+        playerId: playerId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    res.status(200).send(playerRolls);
+  } catch (error) {
+    console.error('Error al obtener la lista de jugadas:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
+
+// Endpoint para eliminar todas las tiradas de un jugador
+app.delete('/games/:id', async (req, res) => {
+  try {
+    const playerId = Number(req.params.id);
+
+    // Elimina todas las tiradas
+    await prisma.roll.deleteMany({
+      where: {
+        playerId,
+      },
+    });
+
+    res.status(200).json({ message: `Tiradas eliminadas exitosamente` });
+  } catch (error) {
+    console.error('Error al eliminar las tiradas:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
+
+// Conexión al servidor
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log('Servidor escuchando en puerto ', PORT);

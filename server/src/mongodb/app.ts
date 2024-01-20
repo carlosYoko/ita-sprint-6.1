@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 
 const app = express();
@@ -7,7 +7,7 @@ const PORT = 3000;
 app.use(express.json());
 
 // Conectar a MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/odm');
+mongoose.connect('mongodb://127.0.0.1:27017/todos_docker');
 
 // Definicion del modelo a partir de un schema sencillo
 const todoSchema = new mongoose.Schema({
@@ -18,11 +18,11 @@ const todoSchema = new mongoose.Schema({
 const Todo = mongoose.model('todo', todoSchema);
 
 // Rutas
-app.get('/', (_req: Request, res: Response) => {
+app.get('/', (_req, res) => {
   res.send('API con Mongoose y TypeScript');
 });
 
-app.get('/todos', async (_req: Request, res: Response) => {
+app.get('/todos', async (_req, res) => {
   try {
     const todos = await Todo.find();
     res.json(todos);
@@ -31,7 +31,7 @@ app.get('/todos', async (_req: Request, res: Response) => {
   }
 });
 
-app.post('/todos', async (req: Request, res: Response) => {
+app.post('/todos', async (req, res) => {
   try {
     const taskData = req.body;
     const task = await Todo.create(taskData);
