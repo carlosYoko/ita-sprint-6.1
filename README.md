@@ -14,6 +14,7 @@ Juego de dados utilizando las siguientes tecnologías:
   - Mongoose (ODM)
   - Docker
   - Jest
+  - CI
 
 - Frontend
 
