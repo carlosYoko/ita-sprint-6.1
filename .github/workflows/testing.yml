@@ -16,7 +16,7 @@ jobs:
           - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: dados # Nombre de tu base de datos
+          MYSQL_DATABASE: dados
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
@@ -41,7 +41,10 @@ jobs:
         run: cd server && npx prisma migrate deploy
 
       - name: Start Docker container
-        run: cd server && docker-compose up -d
+        run: |
+          cd server
+          docker-compose up -d
+          sleep 50  # Ajusta el tiempo según sea necesario
 
       - name: Run tests
         run: npm run test
