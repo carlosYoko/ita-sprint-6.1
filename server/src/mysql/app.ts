@@ -355,7 +355,7 @@ app.get('/ranking/winner', async (_req, res) => {
       return (wins / totalRolls) * 100;
     };
 
-    // Jugador con mayor porcentaje de exito
+    // Jugador con mayor tasa de exito
     const winnerPlayer = allPlayersAndPlays.reduce((prev, cur) => {
       const prevSuccessRate = getSuccessRate(prev);
       const currentSuccessRate = getSuccessRate(cur);
