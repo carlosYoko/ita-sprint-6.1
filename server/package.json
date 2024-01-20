@@ -7,7 +7,7 @@
     "build": "tsc && npm run remove-tests-folder",
     "remove-tests-folder": "rm -rf dist/__tests__",
     "build:watch": "tsc --build tsconfig.json --watch",
-    "test": "jest --coverage",
+    "test": "jest",
     "docker": "docker-compose up",
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",
@@ -25,6 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^5.8.1",
+    "@types/supertest": "^6.0.2",
     "express": "^4.18.2",
     "mongoose": "^8.1.0",
     "supertest": "^6.3.4"

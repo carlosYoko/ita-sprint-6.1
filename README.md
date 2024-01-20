@@ -66,6 +66,13 @@ Para iniciar el servidor MongoDB, ejecutar el siguiente comando en otra terminal
   npm run start:mongodb
 ```
 
+Para ejecutar los tests en produccion, utiliza el siguiente comando:
+_Hay que iniciar los servidores y el container (Docker)_
+
+```bash
+  npm run test
+```
+
 Para iniciar frontend, ejecutar el siguiente comando en otra terminal apuntando a la raiz del proyecto:
 
 ```bash
