@@ -319,6 +319,63 @@ app.get('/ranking/loser', async (_req, res) => {
   }
 });
 
+// Endpoint para devolver el jugador con peor procentaje de exitos
+app.get('/ranking/winner', async (_req, res) => {
+  type RollType = {
+    dice1: number;
+    dice2: number;
+    isWinner: boolean;
+  };
+
+  type PlayerType = {
+    id: number;
+    name: string;
+    rolls: RollType[];
+  };
+
+  try {
+    // Obtener la lista de jugadores y sus jugadas
+    const allPlayersAndPlays = await prisma.player.findMany({
+      include: {
+        rolls: true,
+      },
+    });
+
+    // console.log(
+    //   allPlayersAndPlays.map((game) =>
+    //     game.rolls.filter((wins) => wins.isWinner === true)
+    //   )
+    // );
+
+    // Funcion para obtener el porcentaje de exito de un jugador
+    const getSuccessRate = (player: PlayerType) => {
+      const totalRolls = player.rolls.length;
+      if (totalRolls === 0) return 0;
+      const wins = player.rolls.filter((roll) => roll.isWinner === true).length;
+      return (wins / totalRolls) * 100;
+    };
+
+    // Jugador con mayor porcentaje de exito
+    const winnerPlayer = allPlayersAndPlays.reduce((prev, cur) => {
+      const prevSuccessRate = getSuccessRate(prev);
+      const currentSuccessRate = getSuccessRate(cur);
+      return prevSuccessRate > currentSuccessRate ? prev : cur;
+    });
+
+    // Envia la respuesta del jugador con el peor porcentaje de exito
+    res.status(200).send({
+      winner: {
+        id: winnerPlayer.id,
+        name: winnerPlayer.name,
+        successRate: getSuccessRate(winnerPlayer),
+      },
+    });
+  } catch (error) {
+    console.error('Error al obtener al jugador perdedor:', error);
+    res.status(500).send({ message: 'Error interno del servidor' });
+  }
+});
+
 // Conexión al servidor
 const PORT = 3000;
 app.listen(PORT, () => {
