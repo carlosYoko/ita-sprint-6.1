@@ -193,7 +193,7 @@ app.delete('/games/:id', async (req, res) => {
 /**
  * Endpoints ranking
  */
-// Endpoint del ranking de todos los jugadores
+// Endpoint del ranking de todos los jugadores y porcentaje medio de exitos
 app.get('/ranking', async (_req, res) => {
   type RollType = {
     dice1: number;
