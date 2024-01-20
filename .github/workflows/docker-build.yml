@@ -37,4 +37,4 @@ jobs:
         run: |
           docker push carlosgibe/node:dev
           docker push carlosgibe/mariadb:dev
-          docker push carlosgibe/mongo:dev
+          docker push carlosgibe/mongo:de
