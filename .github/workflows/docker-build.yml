@@ -30,8 +30,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          # Agrega el comando para ejecutar tus pruebas
-          # Por ejemplo: npm test
+          npm test
 
       - name: Stop Docker Containers
         run: |
