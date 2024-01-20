@@ -30,9 +30,9 @@ jobs:
 
       - name: Install Dependencies and Prisma
         run: |
-          cd server && npm run install-allDependencies
-          cd server && npm run prisma-migrate
-          cd server && npm run prisma-generate
+          npm run install-allDependencies
+          npm run prisma-migrate
+          npm run prisma-generate
 
       - name: Run Tests
         run: |
