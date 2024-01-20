@@ -1,15 +1,12 @@
-name: Docker Build
+name: Run Tests on Docker Containers
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,20 +18,21 @@ jobs:
         with:
           node-version: 18
 
-      - name: Build Docker Images
-        run: |
-          docker build -t carlosgibe/node:dev ./server
-          docker build -t carlosgibe/mariadb:dev ./server
-          docker build -t carlosgibe/mongo:dev ./server
-
       - name: Log in to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push Docker Images to DockerHub
+      - name: Start Docker Containers
         run: |
-          docker push carlosgibe/node:dev
-          docker push carlosgibe/mariadb:dev
-          docker push carlosgibe/mongo:dev
+          docker-compose up -d
+
+      - name: Run Tests
+        run: |
+          # Agrega el comando para ejecutar tus pruebas
+          # Por ejemplo: npm test
+
+      - name: Stop Docker Containers
+        run: |
+          docker-compose down
