@@ -1,4 +1,4 @@
-name: CI
+name: Docker CI
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18' # Use the Node.js version you need
 
       - name: Install dependencies
         run: npm install && cd server && npm install
@@ -40,14 +40,14 @@ jobs:
       - name: Run Prisma migrations
         run: cd server && npx prisma migrate deploy
 
+      - name: Build Docker image
+        run: docker build -t your-docker-image-name .
+
       - name: Start Docker container
-        run: |
-          cd server
-          docker-compose up -d
-          sleep 50  # Ajusta el tiempo según sea necesario
+        run: docker run -d --name your-container-name -p 3000:3000 your-docker-image-name
 
       - name: Run tests
         run: npm run test
 
       - name: Stop Docker container
-        run: cd server && docker-compose down
+        run: docker stop your-container-name
