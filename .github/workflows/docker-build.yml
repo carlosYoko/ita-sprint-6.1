@@ -33,7 +33,7 @@ jobs:
           npm run install-allDependencies
 
       - name: Run ts-node
-        run: npx ts-node server/src/mysql
+        run: npx ts-node server/src/mysql/app.ts
 
       - name: Generate Prisma Client
         run: cd server && npx prisma generate --schema=./prisma/schema.prisma
