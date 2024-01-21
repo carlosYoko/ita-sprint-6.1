@@ -1,8 +1,11 @@
 import express from 'express';
+import cors from 'cors';
+
 import { PrismaClient } from '../../prisma/generated/client/';
 
 export const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 const prisma = new PrismaClient();
@@ -58,6 +61,24 @@ app.put('/players/:id', async (req, res) => {
 
     if (!existingPlayer) {
       return res.status(404).send({ error: 'Jugador no encontrado' });
+    }
+
+    // Verifica que no exista otro jugador con el nuevo nombre
+    const existingName = await prisma.player.findFirst({
+      where: {
+        name: name,
+        id: {
+          not: {
+            equals: playerId,
+          },
+        },
+      },
+    });
+
+    if (existingName) {
+      return res
+        .status(400)
+        .send({ error: 'Ya existe un jugador con este nombre!' });
     }
 
     // Actualiza el nombre del jugador en la base de datos
