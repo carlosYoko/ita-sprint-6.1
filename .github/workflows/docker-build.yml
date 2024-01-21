@@ -28,11 +28,21 @@ jobs:
         run: |
           cd server && docker-compose up -d
 
-      - name: Install Dependencies and Prisma
+      - name: Install Dependencies
         run: |
           npm run install-allDependencies
-          npm run prisma-migrate
-          npm run prisma-generate
+
+      - name: Run ts-node
+        run: npx ts-node server/src/mysql
+
+      - name: Generate Prisma Client
+        run: cd server && npx prisma generate --schema=./prisma/schema.prisma
+
+      - name: Migrate Prisma Database
+        run: cd server && npx prisma migrate dev --name init
+
+      - name: Generate Prisma Client (Again)
+        run: cd server && npx prisma generate
 
       - name: Run Tests
         run: |
