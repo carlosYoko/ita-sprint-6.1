@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Node.js
@@ -24,21 +24,21 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Start Docker Containers
+      - name: Start Docker containers
         run: |
           cd server && docker-compose up -d
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
           npm run install-allDependencies
 
-      - name: Generate Prisma Client
+      - name: Generate Prisma client
         run: cd server && npx prisma generate --schema=./prisma/schema.prisma
 
-      - name: Migrate Prisma Database
+      - name: Migrate Prisma database
         run: cd server && npx prisma migrate dev --name init
 
-      - name: Generate Prisma Client (Again)
+      - name: Generate Prisma client (Again)
         run: cd server && npx prisma generate
 
       - name: Run Tests
