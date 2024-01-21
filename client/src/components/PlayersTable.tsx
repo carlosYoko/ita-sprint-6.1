@@ -16,7 +16,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
           <tr>
             <th>ID</th>
             <th>Nombre jugador</th>
-            <th>Porcentaje de exito</th>
+            <th>Porcentaje de éxito</th>
           </tr>
         </thead>
         <tbody>
