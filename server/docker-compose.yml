@@ -1,12 +1,6 @@
 version: "3.9"
 
 services:
-  miapp:
-    image: node
-    container_name: serversprint6
-    ports:
-      - 5000:3000
-    build: .
   mysql_db:
     image: mariadb:latest
     container_name: mymariadbserver
