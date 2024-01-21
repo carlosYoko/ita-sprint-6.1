@@ -38,10 +38,10 @@ jobs:
       - name: Migrate Prisma database
         run: cd server && npx prisma migrate dev --name init
 
-      - name: Run Tests
+      - name: Run tests
         run: |
           cd server && npm run test
 
-      - name: Stop Docker Containers
+      - name: Stop Docker containers
         run: |
           cd server && docker-compose down
