@@ -1,4 +1,4 @@
-name: Run Tests on Docker Containers
+name: Run tests on docker containers
 
 on:
   push:

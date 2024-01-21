@@ -7,7 +7,6 @@ services:
     ports:
       - 5000:3000
     build: .
-    # command: node server.js
   mysql_db:
     image: mariadb:latest
     container_name: mymariadbserver
