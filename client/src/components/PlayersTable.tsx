@@ -24,7 +24,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
             <tr key={player.id}>
               <td>{player.id}</td>
               <td>{player.name}</td>
-              <td>{player.successPercentage}</td>
+              <td>
+                {typeof player.successPercentage === 'number'
+                  ? Number(player.successPercentage).toFixed(2)
+                  : 'Sin partidas ganadas'}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -34,3 +38,4 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
 };
 
 export default PlayerTable;
+// Number(player.successPercentage).toFixed(2)
