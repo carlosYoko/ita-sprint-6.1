@@ -38,9 +38,6 @@ jobs:
       - name: Migrate Prisma database
         run: cd server && npx prisma migrate dev --name init
 
-      - name: Generate Prisma client (Again)
-        run: cd server && npx prisma generate
-
       - name: Run Tests
         run: |
           cd server && npm run test
