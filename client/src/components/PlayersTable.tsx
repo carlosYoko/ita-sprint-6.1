@@ -20,17 +20,18 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
           </tr>
         </thead>
         <tbody>
-          {players.map((player) => (
-            <tr key={player.id}>
-              <td>{player.id}</td>
-              <td>{player.name}</td>
-              <td>
-                {typeof player.successPercentage === 'number'
-                  ? Number(player.successPercentage).toFixed(2)
-                  : 'Sin partidas ganadas'}
-              </td>
-            </tr>
-          ))}
+          {players &&
+            players.map((player) => (
+              <tr key={player.id}>
+                <td>{player.id}</td>
+                <td>{player.name}</td>
+                <td>
+                  {typeof player.successPercentage === 'number'
+                    ? Number(player.successPercentage).toFixed(2)
+                    : 'Sin partidas ganadas'}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
@@ -38,4 +39,3 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
 };
 
 export default PlayerTable;
-// Number(player.successPercentage).toFixed(2)
