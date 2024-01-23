@@ -125,7 +125,7 @@ app.get('/players', async (_req, res) => {
       (player: PlayerType) => {
         const totalRolls = player.rolls.length;
         const successfulRolls = player.rolls.filter(
-          (roll) => roll.isWinner
+          (roll) => roll.isWinner === true
         ).length;
 
         const successPercentage = (successfulRolls / totalRolls) * 100;
@@ -269,7 +269,7 @@ app.get('/ranking', async (_req, res) => {
     const getSuccessRate = (player: PlayerType) => {
       const totalRolls = player.rolls.length;
       if (totalRolls === 0) return 0;
-      const wins = player.rolls.filter((roll) => roll.isWinner).length;
+      const wins = player.rolls.filter((roll) => roll.isWinner === true).length;
       return (wins / totalRolls) * 100;
     };
 
