@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 
 import { PrismaClient } from '../../prisma/generated/client/';
+import { deleteModel } from 'mongoose';
 
 export const app = express();
 
@@ -160,7 +161,7 @@ app.post('/games/:id', async (req, res) => {
     const total = dice1 + dice2;
     const win = total === 7;
 
-    // Almacenar la tirada en la base de datos
+    // Guardar la tirada en la base de datos
     const rollDiceResult = await prisma.roll.create({
       data: {
         dice1: dice1,
@@ -197,7 +198,7 @@ app.get('/games/:id', async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .send({ message: 'Error interno del servidor', error: error });
+      .send({ message: 'Error interno del servidor:', error: error });
   }
 });
 
@@ -205,6 +206,12 @@ app.get('/games/:id', async (req, res) => {
 app.delete('/games/:id', async (req, res) => {
   try {
     const playerId = Number(req.params.id);
+
+    await prisma.player.findFirst({
+      where: {
+        id: playerId,
+      },
+    });
 
     // Elimina todas las tiradas
     await prisma.roll.deleteMany({
@@ -217,7 +224,7 @@ app.delete('/games/:id', async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .send({ message: 'Error interno del servidor', error: error });
+      .send({ message: 'Error interno del servidor:', error: error });
   }
 });
 
@@ -344,7 +351,7 @@ app.get('/ranking/loser', async (_req, res) => {
   }
 });
 
-// Endpoint para devolver el jugador con peor procentaje de exitos
+// Endpoint para devolver el jugador con mayor procentaje de exitos
 app.get('/ranking/winner', async (_req, res) => {
   type RollType = {
     dice1: number;

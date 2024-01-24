@@ -73,7 +73,7 @@ describe('Pruebas para el endpoint GET /games/:id', () => {
     await request(app).post(`/games/${createdPlayer.id}`);
 
     // Obtener la lista de tiradas del jugador
-    const responseGet = await request(app).get(`/games/${createdPlayer.id}`);
+    const response = await request(app).get(`/games/${createdPlayer.id}`);
 
     const rollSchema = {
       id: expect.any(Number),
@@ -84,8 +84,77 @@ describe('Pruebas para el endpoint GET /games/:id', () => {
       playerId: expect.any(Number),
     };
 
-    expect(responseGet.statusCode).toBe(200);
-    expect(responseGet.body).toHaveLength(1);
-    expect(responseGet.body[0]).toMatchObject(rollSchema);
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0]).toMatchObject(rollSchema);
+  });
+
+  it('Debería devolver error interno del servidor si ocurre un error', async () => {
+    // Intentar eliminar tiradas de un jugador inexistente
+    const response = await request(app).delete('/games/xxx');
+
+    // Verificar el código de estado y el mensaje de respuesta
+    expect(response.statusCode).toBe(500);
+    expect(response.body).toHaveProperty(
+      'message',
+      'Error interno del servidor:'
+    );
+  });
+});
+
+describe('Pruebas para el endpoint DELETE /games/:id', () => {
+  // Limpiar entidades después de todas las pruebas
+  afterAll(async () => {
+    try {
+      await prisma.roll.deleteMany();
+      await prisma.player.deleteMany();
+    } catch (error) {
+      console.error('Error al limpiar las entidades:', error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  });
+
+  it('Debería eliminar todas las tiradas de un jugador', async () => {
+    // Crear un nuevo jugador
+    const newPlayer = await prisma.player.create({
+      data: {
+        name: 'NuevoJugador',
+      },
+    });
+
+    // Realizar una tirada
+    await request(app).post(`/games/${newPlayer.id}`);
+
+    // Realizar la petición para eliminar las tiradas del jugador
+    const response = await request(app).delete(`/games/${newPlayer.id}`);
+
+    // Verificar el código de estado y el mensaje de respuesta
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty(
+      'message',
+      'Tiradas eliminadas exitosamente'
+    );
+
+    // Verificar que no hay tiradas asociadas al jugador después de la eliminación
+    const rollsAfterDeletion = await prisma.roll.findMany({
+      where: {
+        playerId: newPlayer.id,
+      },
+    });
+
+    expect(rollsAfterDeletion).toHaveLength(0);
+  });
+
+  it('Debería devolver error interno del servidor si ocurre un error', async () => {
+    // Intentar eliminar tiradas de un jugador inexistente
+    const response = await request(app).delete('/games/xxx');
+
+    // Verificar el código de estado y el mensaje de respuesta
+    expect(response.statusCode).toBe(500);
+    expect(response.body).toHaveProperty(
+      'message',
+      'Error interno del servidor:'
+    );
   });
 });
