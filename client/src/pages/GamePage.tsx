@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import GameHistory from '../components/GameHistory';
+// michi
 
 type UserDataType = {
   id: number;
