@@ -18,7 +18,6 @@ const CreateUserPage: React.FC<CreateUserPageProps> = ({
 }) => {
   const [username, setUsername] = useState('');
   const [isExistUserMessage, setIsExistUserMessage] = useState('');
-  const [players, setPlayers] = useState([]);
   const [isViewRanking, setIsViewRanking] = useState(false);
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,20 +50,6 @@ const CreateUserPage: React.FC<CreateUserPageProps> = ({
     }
   };
 
-  // Fetch de ranking general
-  const handleRanking = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/players');
-      setPlayers(response.data);
-
-      setIsViewRanking(!isViewRanking);
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        console.log(error.response?.data.message);
-      }
-    }
-  };
-
   return (
     <div>
       <h2>Crear nuevo usuario</h2>
@@ -84,12 +69,12 @@ const CreateUserPage: React.FC<CreateUserPageProps> = ({
         <br />
         <br />
       </form>
-      <button onClick={handleRanking}>
+      <button onClick={() => setIsViewRanking(!isViewRanking)}>
         {isViewRanking ? 'Ocultar lista' : 'Lista de jugadores'}
       </button>
       <br />
       <br />
-      {isViewRanking ? <PlayerTable players={players} /> : ' '}
+      {isViewRanking ? <PlayerTable /> : ' '}
     </div>
   );
 };
