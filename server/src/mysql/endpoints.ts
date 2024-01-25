@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 
 import { PrismaClient } from '../../prisma/generated/client/';
-import { deleteModel } from 'mongoose';
 
 export const app = express();
 

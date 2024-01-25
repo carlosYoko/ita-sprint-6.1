@@ -85,7 +85,7 @@ const CreateUserPage: React.FC<CreateUserPageProps> = ({
         <br />
       </form>
       <button onClick={handleRanking}>
-        {isViewRanking ? 'Ocultar ranking' : 'Ranking general'}
+        {isViewRanking ? 'Ocultar lista' : 'Lista de jugadores'}
       </button>
       <br />
       <br />
