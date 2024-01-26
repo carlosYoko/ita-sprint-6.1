@@ -1,6 +1,6 @@
-import { app } from './endpoints';
+import express from 'express';
+import cors from 'cors';
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log('Servidor escuchando en puerto ', PORT);
-});
+export const app = express();
+app.use(cors());
+app.use(express.json());

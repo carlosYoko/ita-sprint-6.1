@@ -17,7 +17,7 @@
     "generate": "npx prisma generate",
     "start:sql": "node dist/mysql/app.js",
     "start:mongodb": "node dist/mongodb/app.js",
-    "dev:sql": "nodemon --exec ts-node src/mysql/app.ts",
+    "dev:sql": "nodemon --exec ts-node src/mysql/application/init.ts",
     "dev:mongodb": "nodemon --exec ts-node src/mongodb/app.ts"
   },
   "keywords": [],
