@@ -120,6 +120,7 @@ app.get("/players", async (_req, res) => {
       return acc;
     }, []);
 
+    //Get the rate of victories and its respective players 
     const playersWithWinRate = combinedData.map(users => {
       const totalRolls = users.rolls.length
       const totalWins = users.rolls.reduce((acc: Array<number>, value, index) => {
