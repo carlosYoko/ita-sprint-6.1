@@ -1,19 +1,17 @@
 import request from 'supertest';
 import { app } from '../mysql/endpoints';
-import { PrismaClient } from '../../prisma/generated/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../mysql/endpoints';
 
 describe('Pruebas para el endpoint POST /players', () => {
+  // Limpiar entidades despues de todas las pruebas
   afterAll(async () => {
     try {
-      await prisma.$executeRaw`DELETE FROM \`Roll\`;`;
-
-      await prisma.$executeRaw`DELETE FROM \`Player\`;`;
-
-      await prisma.$disconnect();
+      await prisma.roll.deleteMany();
+      await prisma.player.deleteMany();
     } catch (error) {
       console.error('Error al limpiar las entidades:', error);
+    } finally {
+      await prisma.$disconnect();
     }
   });
 
@@ -26,8 +24,7 @@ describe('Pruebas para el endpoint POST /players', () => {
     expect(response.body.name).toBe('NuevoJugador');
   });
 
-  it('Deberia devolver el error en caso de que exista el nombre', async () => {
-    // Crear un jugador con el mismo nombre antes de la prueba
+  it('Deberia devolver el error en el caso que ya exista el jugador', async () => {
     await prisma.player.create({
       data: {
         name: 'NuevoJugador2',
@@ -46,20 +43,19 @@ describe('Pruebas para el endpoint POST /players', () => {
 });
 
 describe('Pruebas para el endpoint PUT /players/:id', () => {
+  // Limpiar entidades despues de todas las pruebas
   afterAll(async () => {
     try {
-      await prisma.$executeRaw`DELETE FROM \`Roll\`;`;
-
-      await prisma.$executeRaw`DELETE FROM \`Player\`;`;
-
-      await prisma.$disconnect();
+      await prisma.roll.deleteMany();
+      await prisma.player.deleteMany();
     } catch (error) {
       console.error('Error al limpiar las entidades:', error);
+    } finally {
+      await prisma.$disconnect();
     }
   });
 
   it('Deberia modificar el nombre del jugador', async () => {
-    // Crear un jugador antes de la prueba
     const createdPlayer = await prisma.player.create({
       data: {
         name: 'JugadorOriginal',
@@ -76,7 +72,7 @@ describe('Pruebas para el endpoint PUT /players/:id', () => {
 
   it('Deberia devolver error en el caso de un jugador no encontrado', async () => {
     const response = await request(app)
-      .put('/players/999')
+      .put('/players/9999')
       .send({ name: 'NuevoNombre' });
 
     expect(response.statusCode).toBe(404);
@@ -85,15 +81,16 @@ describe('Pruebas para el endpoint PUT /players/:id', () => {
 });
 
 describe('Pruebas para el endpoint GET /players', () => {
+  // Limpiar entidades despues de todas las pruebas
+
   afterAll(async () => {
     try {
-      await prisma.$executeRaw`DELETE FROM \`Roll\`;`;
-
-      await prisma.$executeRaw`DELETE FROM \`Player\`;`;
-
-      await prisma.$disconnect();
+      await prisma.roll.deleteMany();
+      await prisma.player.deleteMany();
     } catch (error) {
       console.error('Error al limpiar las entidades:', error);
+    } finally {
+      await prisma.$disconnect();
     }
   });
 
@@ -140,6 +137,62 @@ describe('Pruebas para el endpoint GET /players', () => {
       {
         id: player2.id,
         name: 'Jugador2',
+        successPercentage: 50,
+      },
+    ]);
+  });
+});
+
+describe('Pruebas para el endpoint GET /players', () => {
+  // Limpiar entidades despues de todas las pruebas
+
+  afterAll(async () => {
+    try {
+      await prisma.roll.deleteMany();
+      await prisma.player.deleteMany();
+    } catch (error) {
+      console.error('Error al limpiar las entidades:', error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  });
+
+  it('Debería obtener todos los jugadores con sus tiradas y porcentaje de exito', async () => {
+    const player1 = await prisma.player.create({
+      data: {
+        name: 'Jugador1',
+        rolls: {
+          create: [
+            { dice1: 1, dice2: 6, isWinner: true },
+            { dice1: 3, dice2: 4, isWinner: false },
+          ],
+        },
+      },
+    });
+
+    const player2 = await prisma.player.create({
+      data: {
+        name: 'Jugador2',
+        rolls: {
+          create: [
+            { dice1: 2, dice2: 3, isWinner: false },
+            { dice1: 1, dice2: 6, isWinner: true },
+          ],
+        },
+      },
+    });
+
+    const response = await request(app).get('/players');
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual([
+      {
+        id: player1.id,
+        name: player1.name,
+        successPercentage: 50,
+      },
+      {
+        id: player2.id,
+        name: player2.name,
         successPercentage: 50,
       },
     ]);

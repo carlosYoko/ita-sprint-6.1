@@ -8,7 +8,7 @@ export const app = express();
 app.use(cors());
 app.use(express.json());
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 /**
  * Endpoints players
@@ -125,7 +125,7 @@ app.get('/players', async (_req, res) => {
       (player: PlayerType) => {
         const totalRolls = player.rolls.length;
         const successfulRolls = player.rolls.filter(
-          (roll) => roll.isWinner
+          (roll) => roll.isWinner === true
         ).length;
 
         const successPercentage = (successfulRolls / totalRolls) * 100;
@@ -160,7 +160,7 @@ app.post('/games/:id', async (req, res) => {
     const total = dice1 + dice2;
     const win = total === 7;
 
-    // Almacenar la tirada en la base de datos
+    // Guardar la tirada en la base de datos
     const rollDiceResult = await prisma.roll.create({
       data: {
         dice1: dice1,
@@ -172,10 +172,9 @@ app.post('/games/:id', async (req, res) => {
 
     res.status(201).send(rollDiceResult);
   } catch (error) {
-    console.error('Error al realizar la tirada:', error);
     res
       .status(500)
-      .send({ message: 'Error interno del servidor', error: error });
+      .send({ message: 'Error interno del servidor:', error: error });
   }
 });
 
@@ -196,10 +195,9 @@ app.get('/games/:id', async (req, res) => {
 
     res.status(200).send(playerRolls);
   } catch (error) {
-    console.error('Error al obtener la lista de jugadas:', error);
     res
       .status(500)
-      .send({ message: 'Error interno del servidor', error: error });
+      .send({ message: 'Error interno del servidor:', error: error });
   }
 });
 
@@ -207,6 +205,12 @@ app.get('/games/:id', async (req, res) => {
 app.delete('/games/:id', async (req, res) => {
   try {
     const playerId = Number(req.params.id);
+
+    await prisma.player.findFirst({
+      where: {
+        id: playerId,
+      },
+    });
 
     // Elimina todas las tiradas
     await prisma.roll.deleteMany({
@@ -217,10 +221,9 @@ app.delete('/games/:id', async (req, res) => {
 
     res.status(200).json({ message: `Tiradas eliminadas exitosamente` });
   } catch (error) {
-    console.error('Error al eliminar las tiradas:', error);
     res
       .status(500)
-      .send({ message: 'Error interno del servidor', error: error });
+      .send({ message: 'Error interno del servidor:', error: error });
   }
 });
 
@@ -249,8 +252,6 @@ app.get('/ranking', async (_req, res) => {
       },
     });
 
-    // console.log(allPlayersAndPlays);
-
     // Calcular el porcentaje de exito medio del conjunto de todos los jugadores
     const totalRollsAllPlayers = allPlayersAndPlays.reduce(
       (acc, cur) => acc + cur.rolls.length,
@@ -269,7 +270,7 @@ app.get('/ranking', async (_req, res) => {
     const getSuccessRate = (player: PlayerType) => {
       const totalRolls = player.rolls.length;
       if (totalRolls === 0) return 0;
-      const wins = player.rolls.filter((roll) => roll.isWinner).length;
+      const wins = player.rolls.filter((roll) => roll.isWinner === true).length;
       return (wins / totalRolls) * 100;
     };
 
@@ -291,7 +292,6 @@ app.get('/ranking', async (_req, res) => {
       averageSuccessRate,
     });
   } catch (error) {
-    console.error('Error al obtener el ranking:', error);
     res
       .status(500)
       .send({ message: 'Error interno del servidor', error: error });
@@ -320,12 +320,6 @@ app.get('/ranking/loser', async (_req, res) => {
       },
     });
 
-    // console.log(
-    //   allPlayersAndPlays.map((game) =>
-    //     game.rolls.filter((wins) => wins.isWinner === true)
-    //   )
-    // );
-
     // Funcion para obtener el porcentaje de exito de un jugador
     const getSuccessRate = (player: PlayerType) => {
       const totalRolls = player.rolls.length;
@@ -350,14 +344,13 @@ app.get('/ranking/loser', async (_req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error al obtener al jugador perdedor:', error);
     res
       .status(500)
       .send({ message: 'Error interno del servidor', error: error });
   }
 });
 
-// Endpoint para devolver el jugador con peor procentaje de exitos
+// Endpoint para devolver el jugador con mayor procentaje de exitos
 app.get('/ranking/winner', async (_req, res) => {
   type RollType = {
     dice1: number;
@@ -378,12 +371,6 @@ app.get('/ranking/winner', async (_req, res) => {
         rolls: true,
       },
     });
-
-    // console.log(
-    //   allPlayersAndPlays.map((game) =>
-    //     game.rolls.filter((wins) => wins.isWinner === true)
-    //   )
-    // );
 
     // Funcion para obtener el porcentaje de exito de un jugador
     const getSuccessRate = (player: PlayerType) => {
@@ -409,7 +396,6 @@ app.get('/ranking/winner', async (_req, res) => {
       },
     });
   } catch (error) {
-    console.error('Error al obtener al jugador perdedor:', error);
     res
       .status(500)
       .send({ message: 'Error interno del servidor', error: error });

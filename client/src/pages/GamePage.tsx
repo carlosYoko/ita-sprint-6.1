@@ -1,9 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import GameHistory from '../components/GameHistory';
 
 type UserDataType = {
   id: number;
   name: string;
+};
+
+type TypeRolls = {
+  id: number;
+  dice1: number;
+  dice2: number;
+  isWinner: boolean;
+};
+
+type GamesTypes = {
+  id: number;
+  createdAt: Date;
+  dice1: number;
+  dice2: number;
+  isWinner: boolean;
+  playerId: number;
 };
 
 interface GamePageProps {
@@ -14,10 +31,36 @@ interface GamePageProps {
 const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   const [isEditedName, setIsEditedName] = useState(false);
   const [username, setUsername] = useState(userData.name);
+  const [resultRolls, setResultRolls] = useState<TypeRolls>();
   const [isExistUserMessage, setIsExistUserMessage] = useState('');
+  const [gameHistory, setGameHistory] = useState<GamesTypes[]>([]);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+
   let usernameContent;
 
-  // Fetch de cambio de nombre usuario
+  const fetchGameHistory = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/games/${userData.id}`
+      );
+      setGameHistory(response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(error.message);
+      }
+    }
+  }, [setGameHistory, userData.id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isHistoryVisible) {
+        await fetchGameHistory();
+      }
+    };
+
+    fetchData();
+  }, [isHistoryVisible, fetchGameHistory, resultRolls]);
+
   const handleChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
   };
@@ -36,6 +79,31 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setIsExistUserMessage(error.response?.data.error);
+      }
+    }
+  };
+
+  const handleRollsDice = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/games/${userData.id}`
+      );
+      setResultRolls(response.data);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error(error.message);
+      }
+    }
+  };
+
+  const handleDeletePlayerRolls = async () => {
+    try {
+      await axios.delete(`http://localhost:3000/games/${userData.id}`);
+      // Después de eliminar, actualiza el historial de juegos
+      fetchGameHistory();
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error(error.message);
       }
     }
   };
@@ -68,7 +136,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   } else {
     usernameContent = (
       <>
-        <button>Tirar dados</button>
+        <button onClick={handleRollsDice}>Tirar dados</button>
         <br />
         <br />
         <button onClick={() => setIsEditedName(!isEditedName)}>
@@ -83,10 +151,40 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
       <p>Jugador:</p>
       <h3>{username}</h3>
       {isExistUserMessage}
-      <br />
+      {resultRolls && (
+        <>
+          <p>Resultado de la tirada:</p>
+          <p>Dado 1: {resultRolls.dice1}</p>
+          <p>Dado 2: {resultRolls.dice2}</p>
+          <p>
+            {resultRolls.isWinner
+              ? 'Partida Ganada!!!'
+              : 'Partida Perdida... Sigue probando!'}
+          </p>
+        </>
+      )}
       <br />
       {usernameContent}
+
+      <button
+        onClick={() => {
+          setIsHistoryVisible(!isHistoryVisible);
+          fetchGameHistory();
+        }}
+      >
+        {isHistoryVisible ? 'Ocultar historial' : 'Historial de jugadas'}
+      </button>
+      <button
+        onClick={() => {
+          handleDeletePlayerRolls();
+          setIsHistoryVisible(!isHistoryVisible);
+        }}
+      >
+        Eliminar Historial
+      </button>
+
       <br />
+      {isHistoryVisible ? <GameHistory games={gameHistory} /> : ' '}
       <br />
       <button onClick={() => returnMainPage()}>Salir del juego</button>
     </>
