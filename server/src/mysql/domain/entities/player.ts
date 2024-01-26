@@ -1,4 +1,6 @@
-export interface Player {
+// nuevo
+export interface IPlayer {
   id: number;
   name: string;
+  createdAt: Date;
 }
