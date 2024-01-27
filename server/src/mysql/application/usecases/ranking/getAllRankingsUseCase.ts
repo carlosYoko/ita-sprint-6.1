@@ -1,5 +1,5 @@
 import { RankingRepository } from '../../../domain/interfaces/rankingRepository';
-import { IPlayerWithRolls } from 'mysql/domain/entities/rolls';
+import { IPlayerWithRolls } from '../../../domain/entities/rolls';
 
 export const getAllRankingsUseCase = async (
   rankingRepository: RankingRepository
