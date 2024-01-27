@@ -1,4 +1,4 @@
-import { PlayerRepository } from 'mysql/domain/interfaces/playerRepository';
+import { PlayerRepository } from '../../../domain/interfaces/playerRepository';
 
 export const renamePlayerUseCase = async (
   playerRepository: PlayerRepository,

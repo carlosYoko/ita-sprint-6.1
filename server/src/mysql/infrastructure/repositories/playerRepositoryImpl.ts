@@ -1,6 +1,5 @@
 import { IPlayer } from '../../domain/entities/player';
 import { IPlayerWithRolls } from 'mysql/domain/entities/rolls';
-// import { IPlayersAndRolls } from 'mysql/domain/entities/playerAndRolls';
 import { PrismaClient } from '../../../../prisma/generated/client';
 import { PlayerRepository } from '../../domain/interfaces/playerRepository';
 

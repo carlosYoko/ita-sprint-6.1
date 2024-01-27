@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { playerRepositoryImpl } from '../../../infrastructure/repositories/playerRepositoryImpl';
-import { sayWellcomeUseCase } from '../../../application/usecases/sayWellcomeUseCase';
-import { createPlayerUseCase } from '../../../application/usecases/createPlayerUseCase';
-import { renamePlayerUseCase } from '../../../application/usecases/renamePlayerUseCase';
-import { getAllPlayersUseCase } from '../../../application/usecases/getAllPlayersUseCase';
+import { sayWellcomeUseCase } from '../../../application/usecases/player/sayWellcomeUseCase';
+import { createPlayerUseCase } from '../../../application/usecases/player/createPlayerUseCase';
+import { renamePlayerUseCase } from '../../../application/usecases/player/renamePlayerUseCase';
+import { getAllPlayersUseCase } from '../../../application/usecases/player/getAllPlayersUseCase';
 
 export const playerController = {
   wellcome: async (_req: Request, res: Response) => {

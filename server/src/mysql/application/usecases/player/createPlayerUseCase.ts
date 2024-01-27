@@ -1,4 +1,4 @@
-import { PlayerRepository } from '../../domain/interfaces/playerRepository';
+import { PlayerRepository } from '../../../domain/interfaces/playerRepository';
 
 export const createPlayerUseCase = async (
   playerRepository: PlayerRepository,

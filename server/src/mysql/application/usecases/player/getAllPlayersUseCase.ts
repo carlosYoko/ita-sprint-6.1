@@ -1,5 +1,5 @@
-import { PlayerRepository } from 'mysql/domain/interfaces/playerRepository';
-import { IPlayerWithRolls } from 'mysql/domain/entities/rolls';
+import { PlayerRepository } from '../../../domain/interfaces/playerRepository';
+import { IPlayerWithRolls } from '../../../domain/entities/rolls';
 
 export const getAllPlayersUseCase = async (
   playerRepository: PlayerRepository
