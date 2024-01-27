@@ -1,11 +1,13 @@
-// nuevo
-
-import { IPlayer } from 'mysql/domain/entities/player';
+import { IPlayer } from '../../domain/entities/player';
 import { PrismaClient } from '../../../../prisma/generated/client';
-import { PlayerRepository } from 'mysql/domain/interfaces/playerRepository';
+import { PlayerRepository } from '../../domain/interfaces/playerRepository';
 
-export const PlayerRepositoryImpl: PlayerRepository = {
+export const playerRepositoryImpl: PlayerRepository = {
   prisma: new PrismaClient(),
+
+  async wellcome() {
+    return 'Wellcome to API!';
+  },
 
   async findPlayerByName(name: string): Promise<IPlayer | null> {
     return await this.prisma.player.findFirst({
@@ -16,6 +18,20 @@ export const PlayerRepositoryImpl: PlayerRepository = {
         },
       },
     });
+  },
+
+  async findPlayerByID(playerId: number): Promise<IPlayer> {
+    const foundPlayer = await this.prisma.player.findUnique({
+      where: {
+        id: playerId,
+      },
+    });
+
+    if (!foundPlayer) {
+      throw new Error('Jugador no encontrado');
+    }
+
+    return foundPlayer;
   },
 
   async createPlayer(data: { name: string }): Promise<IPlayer> {
