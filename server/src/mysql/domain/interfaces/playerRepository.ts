@@ -11,5 +11,5 @@ export interface PlayerRepository {
   existingPlayer(id: number): Promise<IPlayer | null>;
   existingName(name: string, playerId: number): Promise<IPlayer | null>;
   updatePlayerName(name: string, playerId: number): Promise<IPlayer | null>;
-  getAllPlayers(): Promise<IPlayerWithRolls[] | null>;
+  getAllPlayersAndRolls(): Promise<IPlayerWithRolls[] | null>;
 }

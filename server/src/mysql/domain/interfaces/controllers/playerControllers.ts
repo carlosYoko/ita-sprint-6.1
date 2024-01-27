@@ -3,6 +3,7 @@ import { playerRepositoryImpl } from '../../../infrastructure/repositories/playe
 import { sayWellcomeUseCase } from '../../../application/usecases/sayWellcomeUseCase';
 import { createPlayerUseCase } from '../../../application/usecases/createPlayerUseCase';
 import { renamePlayerUseCase } from '../../../application/usecases/renamePlayerUseCase';
+import { getAllPlayersUseCase } from '../../../application/usecases/getAllPlayersUseCase';
 
 export const playerController = {
   wellcome: async (_req: Request, res: Response) => {
@@ -32,6 +33,17 @@ export const playerController = {
         playerId
       );
       return res.status(201).send(renamePlayer);
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(400).send({ error: error.message });
+      }
+    }
+  },
+
+  getAllPlayers: async (_req: Request, res: Response) => {
+    try {
+      const allPlayers = await getAllPlayersUseCase(playerRepositoryImpl);
+      return res.status(201).send(allPlayers);
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).send({ error: error.message });
