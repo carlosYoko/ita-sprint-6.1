@@ -1,4 +1,5 @@
 import { IPlayer } from '../../domain/entities/player';
+import { IPlayerWithRolls } from 'mysql/domain/entities/rolls';
 import { PrismaClient } from '../../../../prisma/generated/client';
 import { PlayerRepository } from '../../domain/interfaces/playerRepository';
 
@@ -73,6 +74,14 @@ export const playerRepositoryImpl: PlayerRepository = {
       },
       data: {
         name: name || 'ANONIMO',
+      },
+    });
+  },
+
+  async getAllPlayers(): Promise<IPlayerWithRolls[]> {
+    return await this.prisma.player.findMany({
+      include: {
+        rolls: true,
       },
     });
   },
