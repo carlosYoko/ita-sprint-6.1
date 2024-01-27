@@ -12,3 +12,4 @@ routerPlayer.get('/', playerController.getAllPlayers);
 
 routerGames.post('/:id', gamesControllers.rollDice);
 routerGames.get('/:id', gamesControllers.getRolls);
+routerGames.delete('/:id', gamesControllers.deleteRollsById);

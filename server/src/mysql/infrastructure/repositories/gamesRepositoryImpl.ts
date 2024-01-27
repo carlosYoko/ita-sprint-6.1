@@ -1,4 +1,5 @@
 import { IRollDice } from '../../domain/entities/rolls';
+import { IPlayer } from '../../domain/entities/player';
 import { PrismaClient } from '../../../../prisma/generated/client';
 import { GamesRepository } from '../../domain/interfaces/gamesRepository';
 
@@ -28,6 +29,22 @@ export const gamesRepositoryImpl: GamesRepository = {
       },
       orderBy: {
         createdAt: 'desc',
+      },
+    });
+  },
+
+  async deleteRollsById(playerId: number): Promise<void> {
+    await this.prisma.roll.deleteMany({
+      where: {
+        playerId,
+      },
+    });
+  },
+
+  async getPlayerById(playerId: number): Promise<IPlayer | null> {
+    return await this.prisma.player.findFirst({
+      where: {
+        id: playerId,
       },
     });
   },

@@ -1,17 +1,15 @@
 import { Request, Response } from 'express';
 import { gamesRepositoryImpl } from '../../../infrastructure/repositories/gamesRepositoryImpl';
 import { rollDiceUseCase } from '../../../application/usecases/games/rollDiceUseCase';
-import { getRollUseCase } from 'mysql/application/usecases/games/getRollUseCase';
+import { getRollUseCase } from '../../../application/usecases/games/getRollUseCase';
+import { deleteRollUseCase } from '../../../application/usecases/games/deleteRollUseCase';
 
 export const gamesControllers = {
   rollDice: async (req: Request, res: Response) => {
     try {
       const playerId = Number(req.params.id);
-      const rollDiceResult = await rollDiceUseCase(
-        gamesRepositoryImpl,
-        playerId
-      );
-      res.status(201).send(rollDiceResult);
+      await rollDiceUseCase(gamesRepositoryImpl, playerId);
+      res.status(201).send({ message: 'Tiradas eliminadas exitosamente' });
     } catch (error) {
       if (error instanceof Error) {
         return res
@@ -20,16 +18,34 @@ export const gamesControllers = {
       }
     }
   },
+
   getRolls: async (req: Request, res: Response) => {
     try {
       const playerId = Number(req.params.id);
-      const playerRolls = await gamesRepositoryImpl.getRollsById(playerId);
+      const playerRolls = await getRollUseCase(gamesRepositoryImpl, playerId);
       res.status(200).send(playerRolls);
     } catch (error) {
       if (error instanceof Error) {
         res
           .status(500)
           .send({ message: 'Error interno del servidor:', error: error });
+      }
+    }
+  },
+
+  deleteRollsById: async (req: Request, res: Response) => {
+    try {
+      const playerId = Number(req.params.id);
+      await deleteRollUseCase(gamesRepositoryImpl, playerId);
+      res.status(200).send({ message: `Tiradas eliminadas exitosamente` });
+    } catch (error) {
+      if (error instanceof Error) {
+        res
+          .status(500)
+          .send({
+            message: 'Error interno del servidor:',
+            error: error.message,
+          });
       }
     }
   },
