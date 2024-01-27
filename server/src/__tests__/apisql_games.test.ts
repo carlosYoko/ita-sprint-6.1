@@ -24,8 +24,6 @@ describe('Pruebas para el endpoint POST /games/:id', () => {
         name: 'NuevoJugador',
       },
     });
-    console.log(createdPlayer.id);
-
     const response = await request(app).post(`/games/${createdPlayer.id}`);
 
     const storedRoll = await prisma.roll.findUnique({

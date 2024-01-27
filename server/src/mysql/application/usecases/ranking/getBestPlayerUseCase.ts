@@ -1,7 +1,7 @@
 import { RankingRepository } from '../../../domain/interfaces/rankingRepository';
 import { IPlayerWithRolls } from '../../../domain/entities/rolls';
 
-export const getWorstPlayerUseCase = async (
+export const getBestPlayerUseCase = async (
   rankingRepository: RankingRepository
 ) => {
   const allPlayersAndPlays = await rankingRepository.getAllPlayers();
@@ -22,7 +22,7 @@ export const getWorstPlayerUseCase = async (
   });
 
   return {
-    loser: {
+    winner: {
       id: winnerPlayer.id,
       name: winnerPlayer.name,
       successRate: getSuccessRate(winnerPlayer),
