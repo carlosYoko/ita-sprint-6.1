@@ -5,16 +5,15 @@ export const renamePlayerUseCase = async (
   name: string,
   playerId: number
 ) => {
-  const existingPlayerID = await playerRepository.findPlayerByID(playerId);
+  const existingPlayer = await playerRepository.existingPlayer(playerId);
 
-  if (!existingPlayerID) {
+  if (!existingPlayer) {
     throw new Error('Jugador no encontrado');
   }
-  const existingPlayerName = await playerRepository.findPlayerByName(name);
-
-  if (existingPlayerName) {
+  const existingName = await playerRepository.existingName(name, playerId);
+  if (existingName) {
     throw new Error('Ya existe un jugador con este nombre!');
   }
 
-  return await playerRepository.createPlayer(name);
+  return await playerRepository.updatePlayerName(name, playerId);
 };

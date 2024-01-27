@@ -41,4 +41,39 @@ export const playerRepositoryImpl: PlayerRepository = {
       },
     });
   },
+
+  async existingPlayer(playerId: number): Promise<IPlayer | null> {
+    return await this.prisma.player.findUnique({
+      where: {
+        id: playerId,
+      },
+    });
+  },
+
+  async existingName(name: string, playerId: number): Promise<IPlayer | null> {
+    return await this.prisma.player.findFirst({
+      where: {
+        name: name,
+        id: {
+          not: {
+            equals: playerId,
+          },
+        },
+      },
+    });
+  },
+
+  async updatePlayerName(
+    name: string,
+    playerId: number
+  ): Promise<IPlayer | null> {
+    return await this.prisma.player.update({
+      where: {
+        id: playerId,
+      },
+      data: {
+        name: name || 'ANONIMO',
+      },
+    });
+  },
 };

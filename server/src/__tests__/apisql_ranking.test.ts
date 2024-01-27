@@ -1,6 +1,6 @@
 import request from 'supertest';
-import { app } from '../mysql/endpoints';
-import { prisma } from '../mysql/endpoints';
+import { app } from '../mysql/.endpoints';
+import { prisma } from '../mysql/.endpoints';
 
 describe('Pruebas para el endpoint GET /ranking', () => {
   // Limpiar entidades después de todas las pruebas
