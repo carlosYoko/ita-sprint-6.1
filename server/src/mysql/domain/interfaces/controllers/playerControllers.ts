@@ -29,7 +29,7 @@ export const playerController = {
       return res.status(201).send(renamePlayer);
     } catch (error) {
       if (error instanceof Error) {
-        return res.status(400).send({ error: error.message });
+        return res.status(404).send({ error: error.message });
       }
     }
   },
