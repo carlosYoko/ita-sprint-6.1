@@ -3,6 +3,7 @@ import cors from 'cors';
 import {
   routerPlayer,
   routerGames,
+  routerRanking,
 } from '../mysql/domain/interfaces/controllers/routers';
 
 import { PrismaClient } from '../../prisma/generated/client';
@@ -15,3 +16,4 @@ app.use(express.json());
 
 app.use('/players', routerPlayer);
 app.use('/games', routerGames);
+app.use('/ranking', routerRanking);

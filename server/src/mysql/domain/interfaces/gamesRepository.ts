@@ -1,6 +1,6 @@
 import { IRollDice } from '../entities/rolls';
-import { PrismaClient } from '../../../../prisma/generated/client';
 import { IPlayer } from '../entities/player';
+import { PrismaClient } from '../../../../prisma/generated/client';
 
 export interface GamesRepository {
   prisma: PrismaClient;
