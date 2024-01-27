@@ -8,8 +8,11 @@ export const gamesControllers = {
   rollDice: async (req: Request, res: Response) => {
     try {
       const playerId = Number(req.params.id);
-      await rollDiceUseCase(gamesRepositoryImpl, playerId);
-      res.status(201).send({ message: 'Tiradas eliminadas exitosamente' });
+      const rollDiceResult = await rollDiceUseCase(
+        gamesRepositoryImpl,
+        playerId
+      );
+      res.status(201).send(rollDiceResult);
     } catch (error) {
       if (error instanceof Error) {
         return res
@@ -40,12 +43,10 @@ export const gamesControllers = {
       res.status(200).send({ message: `Tiradas eliminadas exitosamente` });
     } catch (error) {
       if (error instanceof Error) {
-        res
-          .status(500)
-          .send({
-            message: 'Error interno del servidor:',
-            error: error.message,
-          });
+        res.status(500).send({
+          message: 'Error interno del servidor:',
+          error: error.message,
+        });
       }
     }
   },
