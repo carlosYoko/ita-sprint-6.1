@@ -1,10 +1,10 @@
 import { IRollDice } from '../../domain/entities/rolls';
 import { IPlayer } from '../../domain/entities/player';
-import { PrismaClient } from '../../../../prisma/generated/client';
+import { prisma } from '../../app';
 import { GamesRepository } from '../../domain/interfaces/gamesRepository';
 
 export const gamesRepositoryImpl: GamesRepository = {
-  prisma: new PrismaClient(),
+  prisma: prisma,
 
   async rollDice(
     dice1: number,
