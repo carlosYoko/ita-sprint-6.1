@@ -1,5 +1,5 @@
 import express from "express";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import cors from "cors";
 import { UserModel, RollsModel } from "./schema";
 
@@ -13,7 +13,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/dice_games");
 
 /*
  * Endpoints players
- */
+*/
 
 //Enpoint for player creation
 app.post("/players", async (req, res) => {
@@ -84,7 +84,6 @@ app.put("/players/:id", async (req, res) => {
 });
 
 //Endpoint to return the ranking of players with victory rate
-
 app.get("/players", async (_req, res) => {
   type RollType = {
     userId: number;
@@ -142,5 +141,83 @@ app.get("/players", async (_req, res) => {
     res.send({ playersWithWinRate });
   } catch (error) {
     res.status(500).send({ message: "Internal server error", error: error });
+  }
+});
+
+/* 
+*  Endpoints games
+*/
+
+//Endpoint to make a roll
+app.post('/games/:id', async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+
+    //Make the the roll
+    const dice1 = Math.floor(Math.random() * 6) + 1;
+    const dice2 = Math.floor(Math.random() * 6) + 1;
+    const total = dice1 + dice2 ;
+    const win = total === 7;
+
+    const roll = new RollsModel({
+      dice1: dice1,
+      dice2: dice2,
+      isWin: win,
+      userId: userId
+    })
+
+    roll.save();
+
+    res.status(201).send(roll);
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: 'Error interno del servidor:', error: error });
+  }
+});
+
+// Endpoint to show a player's rolls
+app.get('/games/:id', async (req, res) => {
+  try {
+    const userId = Number(req.params.id)
+    //get the rolls by the player 
+    const userRolls = await RollsModel.find({userId: userId})
+
+    //Show a different message depending if the player has rolls or not
+
+    if (userRolls.length === 0) return res.status(200).send({message: "This user has no rolls to show"});
+
+    res.status(200).send(userRolls);
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: 'Error interno del servidor:', error: error });
+  }
+});
+
+// Endpoint to delete a player's rolls
+app.delete('/games/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    //Check if the user exist
+    const existingUser = await UserModel.findOne({ userId: userId })
+    if (!existingUser) {
+      return res
+      .status(400)
+      .send({ message: "This user does not exist" });
+    }
+
+    //If the user exists then delete all the rolls it may have
+    const deleteAction = await RollsModel.deleteMany({userId: userId})
+    if (deleteAction.deletedCount === 0) {
+      return res.status(200).json({ message: `This player didn't have any rolls to delete` });
+    }
+
+    res.status(200).json({ message: `Rolls deleted correctly` });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: 'Error interno del servidor:', error: error });
   }
 });
