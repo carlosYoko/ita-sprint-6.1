@@ -1,14 +1,10 @@
 import { IPlayer } from '../../domain/entities/player';
-import { IPlayerWithRolls } from 'mysql/domain/entities/rolls';
-import { prisma } from '../../app';
+import { IPlayerWithRolls } from '../../domain/entities/rolls';
 import { PlayerRepository } from '../../domain/interfaces/playerRepository';
+import { PrismaClient } from '../../../../prisma/generated/client';
 
 export const playerRepositoryImpl: PlayerRepository = {
-  prisma: prisma,
-
-  async wellcome() {
-    return 'Wellcome to API!';
-  },
+  prisma: new PrismaClient(),
 
   async findPlayerByName(name: string): Promise<IPlayer | null> {
     return await this.prisma.player.findFirst({

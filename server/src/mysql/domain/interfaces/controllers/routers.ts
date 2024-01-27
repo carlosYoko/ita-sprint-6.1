@@ -5,7 +5,6 @@ import { gamesControllers } from './gamesControllers';
 export const routerPlayer = express.Router();
 export const routerGames = express.Router();
 
-routerPlayer.get('/api', playerController.wellcome);
 routerPlayer.post('/', playerController.createPlayer);
 routerPlayer.put('/:id', playerController.renamePlayer);
 routerPlayer.get('/', playerController.getAllPlayers);
