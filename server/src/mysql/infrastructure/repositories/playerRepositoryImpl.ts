@@ -34,10 +34,10 @@ export const playerRepositoryImpl: PlayerRepository = {
     return foundPlayer;
   },
 
-  async createPlayer(data: { name: string }): Promise<IPlayer> {
+  async createPlayer(name: string): Promise<IPlayer> {
     return await this.prisma.player.create({
       data: {
-        name: data.name.trim() || 'ANONIMO',
+        name: name.trim() || 'ANONIMO',
       },
     });
   },

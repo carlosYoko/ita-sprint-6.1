@@ -16,5 +16,5 @@ export const renamePlayerUseCase = async (
     throw new Error('Ya existe un jugador con este nombre!');
   }
 
-  return await playerRepository.createPlayer({ name });
+  return await playerRepository.createPlayer(name);
 };
