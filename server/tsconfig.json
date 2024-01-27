@@ -15,12 +15,8 @@
       "*": ["./src/*"]
     }
   },
-  "include": [
-    "./src/**/*",
-    "./generated/**/*",
-    "src/mysql/.endpoints copy.ts",
-    "src/mysql/.endpoints.ts"
-  ],
+
+  "include": ["./src/**/*", "./generated/**/*", "express.d.ts"],
   "exclude": [
     "node_modules",
     "dist",
