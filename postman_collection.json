@@ -1,0 +1,155 @@
+{
+  "info": {
+    "_postman_id": "70c76381-db49-48e8-a804-3ee57190095e",
+    "name": "juego-dados-SQL JWT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20806321"
+  },
+  "item": [
+    {
+      "name": "Crear un jugador",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Juan\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/players",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["players"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Modificar nombre",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTA0NSwibmFtZSI6IkRlYmlhbiIsImlhdCI6MTcwNjQ1MDI2NSwiZXhwIjoxNzA2NDUwNDQ1fQ.gYxpRzny0Uhbz0HPUam0cgwQ4eUZPjGfxgz44nhL_Vc",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"Carlos\" \n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/players/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["players", "1045"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Lista y porcentaje",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/players/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["players", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Tirada dados",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/games/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["games", "12"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Consulta de tiradas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/games/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["games", "12"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar tiradas de usuario",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Ranking todos jugadores",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/ranking/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["ranking", ""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Peor jugador",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Mejor jugador",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
