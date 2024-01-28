@@ -1,6 +1,9 @@
 # Juego de Dados
 
 Juego de dados utilizando clean architecture y las siguientes tecnologías:
+Ganarás la partida si obtienes un 7, cualquier otro resultado será partida perdia.
+El juego está configurado para que un jugador no pueda jugar mas de 3 minutos. Una vez pasado el tiempo,
+ya no podrá jugar más.
 
 - Backend
 
@@ -39,13 +42,19 @@ Se adjuntan la [colección de queries](./postman_collection.json) para MySQL y l
 
 ```
 
-2. Para generar la migración de los schemas Prisma, utiliza el siguiente comando:
+3. Para instalar y ejecutar virtualización de entorno para desarrollo (Docker), ejecutar el siguiente comando:
+
+```bash
+  npm run docker
+```
+
+4. Para generar la migración de los schemas Prisma, utiliza el siguiente comando:
 
 ```bash
   npm run prisma-generate
 ```
 
-3. Para aplicar la migración, utiliza el siguiente comando:
+5. Para aplicar la migración, utiliza el siguiente comando:
 
 ```bash
   npm run prisma-migrate

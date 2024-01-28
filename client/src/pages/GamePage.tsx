@@ -108,6 +108,8 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
         }
       );
 
+      console.log(response.data);
+
       setResultRolls(response.data);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -177,8 +179,8 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
           <p>Dado 2: {resultRolls.dice2}</p>
           <p>
             {resultRolls.isWinner
-              ? 'Partida Ganada!!!'
-              : 'Partida Perdida... Sigue probando!'}
+              ? 'Partida ganada!!!'
+              : 'Partida perdida... Sigue probando!'}
           </p>
         </>
       )}
