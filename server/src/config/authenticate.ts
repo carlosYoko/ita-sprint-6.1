@@ -1,24 +1,26 @@
-import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-
-const secretKey = 'secret_word';
+import { Request, Response, NextFunction } from 'express';
 
 export const authenticateMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.headers.authorization;
+  const token = req.header('Authorization');
 
   if (!token) {
-    return res.status(401).send({ message: 'Token no proporcionado' });
+    return res.status(401).send({ error: 'Token no proporcionado' });
   }
 
   try {
-    const decodedToken = jwt.verify(token, secretKey);
+    // Verifica y decodifica el token
+    const decodedToken: any = jwt.verify(token, 'tu_secreto'); // Reemplaza 'tu_secreto' con tu clave secreta
+
+    // Agrega la información del usuario al objeto req.user
     req.user = decodedToken;
-    next();
+
+    next(); // Continúa con la siguiente función en la cadena de middleware
   } catch (error) {
-    return res.status(401).send({ message: 'Token Invalido' });
+    return res.status(401).send({ error: 'Token inválido' });
   }
 };
