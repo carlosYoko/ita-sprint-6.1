@@ -37,7 +37,7 @@ Puedes acceder a la [colección de queries](./postman_collection.json) para la v
 
 ```bash
   git clone https://github.com/carlosYoko/sprint-6.1
-  cd nombre-de-tu-proyecto
+  cd sprint-6.1
   npm run install-allDependencies
 
 ```
