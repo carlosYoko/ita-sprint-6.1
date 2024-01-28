@@ -143,7 +143,7 @@ describe('Pruebas para el endpoint GET /players', () => {
 
     const response = await request(app).get('/players');
 
-    expect(response.statusCode).toBe(200); // Cambiado de 201 a 200 si es una solicitud GET exitosa
+    expect(response.statusCode).toBe(200);
     expect(response.body).toEqual([
       {
         id: player1.id,
