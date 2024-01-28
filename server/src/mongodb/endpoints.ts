@@ -134,7 +134,7 @@ app.get("/players", async (_req, res) => {
         return {
           id: users.userId,
           name: users.name,
-          successPercentage: successRate || "No victories yet",
+          successPercentage: successRate ? `${successRate.toFixed(0)}%` : "No victories yet"
         };
     })
 
@@ -172,7 +172,7 @@ app.post('/games/:id', async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .send({ message: 'Error interno del servidor:', error: error });
+      .send({ message: 'Internal server error', error: error });
   }
 });
 
@@ -191,7 +191,7 @@ app.get('/games/:id', async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .send({ message: 'Error interno del servidor:', error: error });
+      .send({ message: 'Internal server error', error: error });
   }
 });
 
@@ -218,6 +218,228 @@ app.delete('/games/:id', async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .send({ message: 'Error interno del servidor:', error: error });
+      .send({ message: 'Internal server error', error: error });
+  }
+});
+
+/* 
+* Endpoints "ranking"
+*/
+
+// Endpoint del ranking de todos los jugadores y porcentaje medio de exitos
+app.get('/ranking', async (_req, res) => {
+  type RollType = {
+    userId: number;
+    name: string;
+    rolls: Array<boolean>;
+  };
+
+  try {
+    //First retrieve both Users and Rolls
+    const allRolls = await RollsModel.find();
+    const allUsers = await UserModel.find();
+
+    //Iterate over the object to combine all the useful data in a single variable
+    const combinedData = allRolls.map((roll) => {
+      const user = allUsers.find((users) => users.userId === roll.userId);
+      return {
+        userId: roll.userId,
+        name: user!.name,
+        isWin: roll.isWin
+      };
+    })
+
+    //Get the global success rate
+    const globalVictoryCount = combinedData.reduce((acc, cur) => {
+      return acc + (cur.isWin ? 1 : 0)
+  }, 0);
+
+    const globalSuccessRate = (globalVictoryCount / combinedData.length) * 100
+
+    const playersAndRolls = combinedData.reduce((acc: RollType[], roll) => {
+      const existingUser = acc.find((user) => user.userId === roll.userId);
+
+      if (existingUser) {
+        existingUser.rolls.push(roll.isWin!);
+      } else {
+        acc.push({
+          userId: roll.userId!,
+          name: roll.name!,
+          rolls: [roll.isWin!],
+        });
+      }
+      return acc;
+    }, []);
+
+    // Get the rate of victories and its respective players 
+    const playersWithWinRate = playersAndRolls.map(users => {
+      const totalRolls = users.rolls.length
+      const totalWins = users.rolls.reduce((acc: Array<number>, value, index) => {
+        if (value) {
+          acc.push(index);
+        }
+        return acc;
+      }, []).length;
+
+      const successRate = (totalWins / totalRolls) * 100;
+
+        return {
+          id: users.userId,
+          name: users.name,
+          successPercentage: successRate.toFixed(1),
+        };
+    })
+
+    const rankedPlayers = playersWithWinRate.sort((a, b) => Number(b.successPercentage) - Number(a.successPercentage))
+
+    res.send(
+      { ...rankedPlayers,
+        globalSuccessRate: globalSuccessRate.toFixed(1)
+      });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: 'Internal server error', error: error });
+  }
+});
+
+// Endpoint para devolver el jugador con peor procentaje de exitos
+app.get('/ranking/loser', async (_req, res) => {
+  type RollType = {
+    userId: number;
+    name: string;
+    rolls: Array<boolean>;
+  };
+
+  try {
+    //First retrieve both Users and Rolls
+    const allRolls = await RollsModel.find();
+    const allUsers = await UserModel.find();
+
+    //Iterate over the object to combine all the useful data in a single variable
+    const combinedData = allRolls.map((roll) => {
+      const user = allUsers.find((users) => users.userId === roll.userId);
+      return {
+        userId: roll.userId,
+        name: user!.name,
+        isWin: roll.isWin
+      };
+    }).reduce((acc: RollType[], roll) => {
+      const existingUser = acc.find((user) => user.userId === roll.userId);
+
+      if (existingUser) {
+        existingUser.rolls.push(roll.isWin!);
+      } else {
+        acc.push({
+          userId: roll.userId!,
+          name: roll.name!,
+          rolls: [roll.isWin!],
+        });
+      }
+      return acc;
+    }, [])
+    .filter(data => data.rolls.includes(true))
+
+    //Get the rate of victories and its respective players 
+    const playersWithWinRate = combinedData.map(users => {
+      const totalRolls = users.rolls.length
+      const totalWins = users.rolls.reduce((acc: Array<number>, value, index) => {
+        if (value) {
+          acc.push(index);
+        }
+        return acc;
+      }, []).length;
+
+      const successRate = (totalWins / totalRolls) * 100;
+
+        return {
+          id: users.userId,
+          name: users.name,
+          successPercentage: successRate.toFixed(1),
+        };
+    })
+
+    //sort the players form highest to lowest success percentage
+    const rankedPlayers = playersWithWinRate.sort((a, b) => Number(b.successPercentage) - Number(a.successPercentage))
+    
+    //The player with less succesRate will alway be 
+    const loserPlayer = playersWithWinRate[rankedPlayers.length - 1]
+
+    res.send({ loserPlayer });
+    
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: 'Internal server error', error: error });
+  }
+});
+
+//Endpoint to show the player with the highest success rate
+app.get('/ranking/winner', async (_req, res) => {
+  type RollType = {
+    userId: number;
+    name: string;
+    rolls: Array<boolean>;
+  };
+
+  try {
+    //First retrieve both Users and Rolls
+    const allRolls = await RollsModel.find();
+    const allUsers = await UserModel.find();
+
+    //Iterate over the object to combine all the useful data in a single variable
+    const combinedData = allRolls.map((roll) => {
+      const user = allUsers.find((users) => users.userId === roll.userId);
+      return {
+        userId: roll.userId,
+        name: user!.name,
+        isWin: roll.isWin
+      };
+    }).reduce((acc: RollType[], roll) => {
+      const existingUser = acc.find((user) => user.userId === roll.userId);
+
+      if (existingUser) {
+        existingUser.rolls.push(roll.isWin!);
+      } else {
+        acc.push({
+          userId: roll.userId!,
+          name: roll.name!,
+          rolls: [roll.isWin!],
+        });
+      }
+      return acc;
+    }, [])
+    .filter(data => data.rolls.includes(true))
+
+    //Get the rate of victories and its respective players 
+    const playersWithWinRate = combinedData.map(users => {
+      const totalRolls = users.rolls.length
+      const totalWins = users.rolls.reduce((acc: Array<number>, value, index) => {
+        if (value) {
+          acc.push(index);
+        }
+        return acc;
+      }, []).length;
+
+      const successRate = (totalWins / totalRolls) * 100;
+
+        return {
+          id: users.userId,
+          name: users.name,
+          successPercentage: successRate.toFixed(1),
+        };
+    })
+
+    //sort the players form highest to lowest success percentage
+    const rankedPlayers = playersWithWinRate.sort((a, b) => Number(b.successPercentage) - Number(a.successPercentage))
+    
+    //The player with less succesRate will alway be 
+    const loserPlayer = rankedPlayers[0]
+
+    res.send({ loserPlayer });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: 'Error interno del servidor', error: error });
   }
 });
