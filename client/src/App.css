@@ -37,3 +37,7 @@ tr:nth-child(even) {
 tr:nth-child(odd) {
   background-color: rgba(255, 255, 255, 0.224);
 }
+
+#error_token {
+  color: red;
+}

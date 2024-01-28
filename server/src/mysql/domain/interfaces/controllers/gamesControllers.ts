@@ -21,6 +21,7 @@ export const gamesControllers = {
         gamesRepositoryImpl,
         playerId
       );
+
       res.status(201).send(rollDiceResult);
     } catch (error) {
       if (error instanceof Error) {

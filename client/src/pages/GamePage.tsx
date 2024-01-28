@@ -31,10 +31,12 @@ interface GamePageProps {
 const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   const [isEditedName, setIsEditedName] = useState(false);
   const [username, setUsername] = useState(userData.name);
+  const [newUsername, setNewUsername] = useState('');
   const [resultRolls, setResultRolls] = useState<TypeRolls>();
   const [isExistUserMessage, setIsExistUserMessage] = useState('');
   const [gameHistory, setGameHistory] = useState<GamesTypes[]>([]);
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const [messageTokenExpired, setMessageTokenExpired] = useState('');
 
   let usernameContent;
 
@@ -63,10 +65,11 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   }, [isHistoryVisible, fetchGameHistory, resultRolls]);
 
   const handleChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
+    setNewUsername(e.target.value);
   };
 
   const handleSubmit = async () => {
+    setUsername(newUsername);
     try {
       // Obtener el token del localStorage
       const userToken = localStorage.getItem('userToken');
@@ -74,7 +77,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
       const response = await axios.put(
         `http://localhost:3000/players/${userData.id}`,
         {
-          name: username,
+          name: newUsername,
         },
         {
           headers: {
@@ -108,15 +111,20 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
         }
       );
 
-      console.log(response.data);
-
       setResultRolls(response.data);
-    } catch (error: unknown) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error(error.message);
+        if (error.response?.data.error === 'Token ha expirado') {
+          setMessageTokenExpired(
+            'La sesión ha caducado. No puedes jugar más...'
+          );
+        } else {
+          console.error(error.message);
+        }
       }
     }
   };
+
   const handleDeletePlayerRolls = async () => {
     try {
       await axios.delete(`http://localhost:3000/games/${userData.id}`);
@@ -134,7 +142,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
       <>
         <input
           type="text"
-          value={username}
+          value={newUsername}
           onFocus={() => setIsExistUserMessage('')}
           onChange={(e) => {
             handleChangeUsername(e);
@@ -146,7 +154,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
         <button
           onClick={() => {
             setIsExistUserMessage('');
-            setUsername(userData.name);
+            setUsername(username);
             setIsEditedName(!isEditedName);
           }}
         >
@@ -170,6 +178,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   return (
     <>
       <p>Jugador:</p>
+      <h2 id="error_token">{messageTokenExpired}</h2>
       <h3>{username}</h3>
       {isExistUserMessage}
       {resultRolls && (
