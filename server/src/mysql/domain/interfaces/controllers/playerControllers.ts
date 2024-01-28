@@ -57,7 +57,7 @@ export const playerController = {
   getAllPlayers: async (_req: Request, res: Response) => {
     try {
       const allPlayers = await getAllPlayersUseCase(playerRepositoryImpl);
-      return res.status(201).send(allPlayers);
+      return res.status(200).send(allPlayers);
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).send({ error: error.message });

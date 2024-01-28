@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 
 describe('Pruebas para el endpoint POST /players', () => {
   // Limpiar entidades despues de todas las pruebas
+
   afterAll(async () => {
     try {
       await prisma.roll.deleteMany();
@@ -47,7 +48,18 @@ describe('Pruebas para el endpoint POST /players', () => {
   });
 });
 
-describe('Pruebas para el endpoint POST /players', () => {
+describe('Pruebas para el endpoint POST /players/:id', () => {
+  afterAll(async () => {
+    try {
+      await prisma.roll.deleteMany();
+      await prisma.player.deleteMany();
+    } catch (error) {
+      console.error('Error al limpiar las entidades:', error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  });
+
   it('Deberia dar error de token no proporcionado', async () => {
     // Crear nuevo jugador
     const createdPlayer = await prisma.player.create({
@@ -88,5 +100,61 @@ describe('Pruebas para el endpoint POST /players', () => {
 
     expect(response.statusCode).toBe(201);
     expect(response.body.name).toBe('NuevoJugador4');
+  });
+});
+
+describe('Pruebas para el endpoint GET /players', () => {
+  // Limpiar entidades despues de todas las pruebas
+  afterAll(async () => {
+    try {
+      await prisma.roll.deleteMany();
+      await prisma.player.deleteMany();
+    } catch (error) {
+      console.error('Error al limpiar las entidades:', error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  });
+
+  it('Deberia obtener todos los jugadores con sus tiradas y porcentaje de exito', async () => {
+    const player1 = await prisma.player.create({
+      data: {
+        name: 'Jugador1',
+        rolls: {
+          create: [
+            { dice1: 1, dice2: 6, isWinner: true },
+            { dice1: 3, dice2: 4, isWinner: false },
+          ],
+        },
+      },
+    });
+
+    const player2 = await prisma.player.create({
+      data: {
+        name: 'Jugador2',
+        rolls: {
+          create: [
+            { dice1: 2, dice2: 3, isWinner: false },
+            { dice1: 1, dice2: 6, isWinner: true },
+          ],
+        },
+      },
+    });
+
+    const response = await request(app).get('/players');
+
+    expect(response.statusCode).toBe(200); // Cambiado de 201 a 200 si es una solicitud GET exitosa
+    expect(response.body).toEqual([
+      {
+        id: player1.id,
+        name: 'Jugador1',
+        successPercentage: 50,
+      },
+      {
+        id: player2.id,
+        name: 'Jugador2',
+        successPercentage: 50,
+      },
+    ]);
   });
 });
