@@ -24,7 +24,7 @@ ya no podrá jugar más.
 
 ##### Trabajo del Sprint 6.1 de IT-Academy en la especialización de Node.js.
 
-Se adjuntan la [colección de queries](./postman_collection.json) para MySQL y la [documentación de la API](API.md).
+Puedes acceder a la [colección de queries](./postman_collection.json) para la versión MySQL y a la [documentación de la API](API.md).
 
 ## Requisitos Previos
 
