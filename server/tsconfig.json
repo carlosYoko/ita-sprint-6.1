@@ -11,6 +11,7 @@
     "removeComments": true,
     "baseUrl": "./",
     "typeRoots": ["./node_modules/@types"],
+    "types": ["jest"],
     "paths": {
       "*": ["./src/*"]
     }
