@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose, { mongo } from "mongoose";
 import cors from "cors";
 import { UserModel, RollsModel } from "./schema";
 
@@ -7,9 +6,6 @@ export const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-// Mongo connection
-mongoose.connect("mongodb://127.0.0.1:27017/dice_games");
 
 /*
  * Endpoints players
@@ -36,7 +32,7 @@ app.post("/players", async (req, res) => {
 
       newUser.save();
 
-      res.status(200).send(newUser);
+      res.status(201).send({message: `The player ${newUser.name} has been created`});
       return;
     }
 
