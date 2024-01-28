@@ -1,7 +1,7 @@
 # Juego de Dados
 
 Juego de dados utilizando clean architecture y las siguientes tecnologías:
-Ganarás la partida si obtienes un 7, cualquier otro resultado será partida perdia.
+Ganarás la partida si obtienes un 7, cualquier otro resultado será partida perdida.
 El juego está configurado para que un jugador no pueda jugar mas de 3 minutos. Una vez pasado el tiempo,
 ya no podrá jugar más.
 
