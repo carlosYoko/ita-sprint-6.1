@@ -43,6 +43,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
       const response = await axios.get(
         `http://localhost:3000/games/${userData.id}`
       );
+      console.log(response.data);
       setGameHistory(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -102,7 +103,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${userToken}`, // Incluye el token en la cabecera
+            Authorization: `Bearer ${userToken}`,
           },
         }
       );
@@ -117,7 +118,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   const handleDeletePlayerRolls = async () => {
     try {
       await axios.delete(`http://localhost:3000/games/${userData.id}`);
-      // Después de eliminar, actualiza el historial de juegos
+      // Despues de eliminar, actualiza el historial de juegos
       fetchGameHistory();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

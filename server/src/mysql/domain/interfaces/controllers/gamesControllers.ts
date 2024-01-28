@@ -35,7 +35,7 @@ export const gamesControllers = {
     try {
       const playerId = Number(req.params.id);
       const playerRolls = await getRollUseCase(gamesRepositoryImpl, playerId);
-      res.status(200).send(playerRolls);
+      res.status(201).send(playerRolls);
     } catch (error) {
       if (error instanceof Error) {
         res

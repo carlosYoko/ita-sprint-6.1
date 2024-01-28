@@ -1,12 +1,12 @@
 import request from 'supertest';
+import jwt from 'jsonwebtoken';
 import { app } from '../mysql/app';
 import { PrismaClient } from '../../prisma/generated/client';
-import jwt from 'jsonwebtoken';
 
 const secretKey = process.env.SECRET || 'secret_word';
 const prisma = new PrismaClient();
 
-describe('Pruebas para el endpoint PUT /players/:id', () => {
+describe('Pruebas para el endpoint POST /players', () => {
   // Limpiar entidades despues de todas las pruebas
   afterAll(async () => {
     try {
@@ -29,22 +29,6 @@ describe('Pruebas para el endpoint PUT /players/:id', () => {
     expect(response.body.player.name).toBe('NuevoJugador');
   });
 
-  it('Deberia dar error de token no proporcionado', async () => {
-    // Crear nuevo jugador
-    const createdPlayer = await prisma.player.create({
-      data: {
-        name: 'JugadorOriginal',
-      },
-    });
-
-    const response = await request(app)
-      .put(`/players/${createdPlayer.id}`)
-      .send({ name: 'NuevoNombre' });
-
-    expect(response.statusCode).toBe(401);
-    expect(response.body).toEqual({ error: 'Token no proporcionado' });
-  });
-
   it('Deberia devolver el error en el caso que ya exista el jugador', async () => {
     await prisma.player.create({
       data: {
@@ -60,6 +44,24 @@ describe('Pruebas para el endpoint PUT /players/:id', () => {
     expect(response.body).toEqual({
       error: 'Ya existe un jugador con este nombre!',
     });
+  });
+});
+
+describe('Pruebas para el endpoint POST /players', () => {
+  it('Deberia dar error de token no proporcionado', async () => {
+    // Crear nuevo jugador
+    const createdPlayer = await prisma.player.create({
+      data: {
+        name: 'JugadorOriginal',
+      },
+    });
+
+    const response = await request(app)
+      .put(`/players/${createdPlayer.id}`)
+      .send({ name: 'NuevoNombre' });
+
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toEqual({ error: 'Token no proporcionado' });
   });
 
   it('Deberia cambiar el nombre del jugador', async () => {

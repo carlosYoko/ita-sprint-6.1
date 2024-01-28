@@ -1,4 +1,4 @@
-import { GamesRepository } from 'mysql/domain/interfaces/gamesRepository';
+import { GamesRepository } from '../../../domain/interfaces/gamesRepository';
 
 export const getRollUseCase = async (
   gamesRepository: GamesRepository,

@@ -6,10 +6,6 @@ import {
   routerRanking,
 } from '../mysql/domain/interfaces/controllers/routers';
 
-import { PrismaClient } from '../../prisma/generated/client';
-
-export const prisma = new PrismaClient();
-
 export const app = express();
 app.use(cors());
 app.use(express.json());
