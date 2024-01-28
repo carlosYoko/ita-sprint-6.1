@@ -67,12 +67,21 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
 
   const handleSubmit = async () => {
     try {
+      // Obtener el token del localStorage
+      const userToken = localStorage.getItem('userToken');
+
       const response = await axios.put(
         `http://localhost:3000/players/${userData.id}`,
         {
           name: username,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`, // Incluye el token en la cabecera
+          },
         }
       );
+
       console.log(response.data.name);
       setUsername(response.data.name);
       setIsEditedName(!isEditedName);
@@ -85,9 +94,19 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
 
   const handleRollsDice = async () => {
     try {
+      // Obtener el token del localStorage
+      const userToken = localStorage.getItem('userToken');
+
       const response = await axios.post(
-        `http://localhost:3000/games/${userData.id}`
+        `http://localhost:3000/games/${userData.id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`, // Incluye el token en la cabecera
+          },
+        }
       );
+
       setResultRolls(response.data);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -95,7 +114,6 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
       }
     }
   };
-
   const handleDeletePlayerRolls = async () => {
     try {
       await axios.delete(`http://localhost:3000/games/${userData.id}`);
