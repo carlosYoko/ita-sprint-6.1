@@ -18,7 +18,7 @@ export const playerController = {
           name: newPlayer.name,
         },
         secretKey,
-        { expiresIn: '30m' }
+        { expiresIn: '3m' }
       );
 
       return res.status(201).send({ player: newPlayer, token: newToken });
