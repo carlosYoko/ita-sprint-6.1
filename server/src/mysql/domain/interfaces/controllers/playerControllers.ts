@@ -36,7 +36,6 @@ export const playerController = {
       if (!token) {
         throw new Error('Token no proporcionado');
       }
-
       jwt.verify(token, secretKey);
 
       const playerId = Number(req.params.id);
@@ -46,6 +45,7 @@ export const playerController = {
         name,
         playerId
       );
+
       return res.status(201).send(renamePlayer);
     } catch (error) {
       if (error instanceof Error) {

@@ -16,7 +16,7 @@ export const authenticateMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header('Authorization');
+  const token = req.header('Authorization')?.split(' ')[1];
 
   if (!token) {
     return res.status(401).send({ error: 'Token no proporcionado' });
@@ -29,6 +29,7 @@ export const authenticateMiddleware = (
 
     next();
   } catch (error) {
+    console.error('Error al verificar el token:', error);
     return res.status(401).send({ error: 'Token inválido' });
   }
 };

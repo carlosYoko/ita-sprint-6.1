@@ -12,7 +12,7 @@ routerPlayer.post('/', playerController.createPlayer);
 routerPlayer.put('/:id', authenticateMiddleware, playerController.renamePlayer);
 routerPlayer.get('/', playerController.getAllPlayers);
 
-routerGames.post('/:id', gamesControllers.rollDice);
+routerGames.post('/:id', authenticateMiddleware, gamesControllers.rollDice);
 routerGames.get('/:id', gamesControllers.getRolls);
 routerGames.delete('/:id', gamesControllers.deleteRollsById);
 
