@@ -1,27 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import GameHistory from '../components/GameHistory';
-
-type UserDataType = {
-  id: number;
-  name: string;
-};
-
-type TypeRolls = {
-  id: number;
-  dice1: number;
-  dice2: number;
-  isWinner: boolean;
-};
-
-type GamesTypes = {
-  id: number;
-  createdAt: Date;
-  dice1: number;
-  dice2: number;
-  isWinner: boolean;
-  playerId: number;
-};
+import { UserDataType, TypeRolls, GamesTypes } from '../types/types';
 
 interface GamePageProps {
   userData: Partial<UserDataType>;
