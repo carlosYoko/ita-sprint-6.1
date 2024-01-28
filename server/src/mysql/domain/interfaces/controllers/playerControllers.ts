@@ -3,13 +3,25 @@ import { playerRepositoryImpl } from '../../../infrastructure/repositories/playe
 import { createPlayerUseCase } from '../../../application/usecases/player/createPlayerUseCase';
 import { renamePlayerUseCase } from '../../../application/usecases/player/renamePlayerUseCase';
 import { getAllPlayersUseCase } from '../../../application/usecases/player/getAllPlayersUseCase';
+import jwt from 'jsonwebtoken';
+
+const secretKey = process.env.SECRET || 'secret_word';
 
 export const playerController = {
   createPlayer: async (req: Request, res: Response) => {
     try {
       const { name } = req.body;
       const newPlayer = await createPlayerUseCase(playerRepositoryImpl, name);
-      return res.status(201).send(newPlayer);
+      const newToken = jwt.sign(
+        {
+          id: newPlayer.id,
+          name: newPlayer.name,
+        },
+        secretKey,
+        { expiresIn: '30m' }
+      );
+
+      return res.status(201).send({ player: newPlayer, token: newToken });
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).send({ error: error.message });
@@ -18,7 +30,15 @@ export const playerController = {
   },
 
   renamePlayer: async (req: Request, res: Response) => {
+    const token = req.headers.authorization?.split(' ')[1];
+
     try {
+      if (!token) {
+        throw new Error('Token no proporcionado');
+      }
+
+      jwt.verify(token, secretKey);
+
       const playerId = Number(req.params.id);
       const { name } = req.body;
       const renamePlayer = await renamePlayerUseCase(
