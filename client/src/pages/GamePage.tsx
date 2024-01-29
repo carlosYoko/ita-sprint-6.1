@@ -1,27 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import GameHistory from '../components/GameHistory';
-
-type UserDataType = {
-  id: number;
-  name: string;
-};
-
-type TypeRolls = {
-  id: number;
-  dice1: number;
-  dice2: number;
-  isWinner: boolean;
-};
-
-type GamesTypes = {
-  id: number;
-  createdAt: Date;
-  dice1: number;
-  dice2: number;
-  isWinner: boolean;
-  playerId: number;
-};
+import { UserDataType, TypeRolls, GamesTypes } from '../types/types';
 
 interface GamePageProps {
   userData: Partial<UserDataType>;
@@ -31,10 +11,12 @@ interface GamePageProps {
 const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   const [isEditedName, setIsEditedName] = useState(false);
   const [username, setUsername] = useState(userData.name);
+  const [newUsername, setNewUsername] = useState('');
   const [resultRolls, setResultRolls] = useState<TypeRolls>();
   const [isExistUserMessage, setIsExistUserMessage] = useState('');
   const [gameHistory, setGameHistory] = useState<GamesTypes[]>([]);
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const [messageTokenExpired, setMessageTokenExpired] = useState('');
 
   let usernameContent;
 
@@ -43,6 +25,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
       const response = await axios.get(
         `http://localhost:3000/games/${userData.id}`
       );
+      console.log(response.data);
       setGameHistory(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -62,17 +45,27 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   }, [isHistoryVisible, fetchGameHistory, resultRolls]);
 
   const handleChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
+    setNewUsername(e.target.value);
   };
 
   const handleSubmit = async () => {
+    setUsername(newUsername);
     try {
+      // Obtener el token del localStorage
+      const userToken = localStorage.getItem('userToken');
+
       const response = await axios.put(
         `http://localhost:3000/players/${userData.id}`,
         {
-          name: username,
+          name: newUsername,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`, // Incluye el token en la cabecera
+          },
         }
       );
+
       console.log(response.data.name);
       setUsername(response.data.name);
       setIsEditedName(!isEditedName);
@@ -85,13 +78,29 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
 
   const handleRollsDice = async () => {
     try {
+      // Obtener el token del localStorage
+      const userToken = localStorage.getItem('userToken');
+
       const response = await axios.post(
-        `http://localhost:3000/games/${userData.id}`
+        `http://localhost:3000/games/${userData.id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
       );
+
       setResultRolls(response.data);
-    } catch (error: unknown) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error(error.message);
+        if (error.response?.data.error === 'Token ha expirado') {
+          setMessageTokenExpired(
+            'La sesión ha caducado. No puedes jugar más...'
+          );
+        } else {
+          console.error(error.message);
+        }
       }
     }
   };
@@ -99,7 +108,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   const handleDeletePlayerRolls = async () => {
     try {
       await axios.delete(`http://localhost:3000/games/${userData.id}`);
-      // Después de eliminar, actualiza el historial de juegos
+      // Despues de eliminar, actualiza el historial de juegos
       fetchGameHistory();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -113,7 +122,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
       <>
         <input
           type="text"
-          value={username}
+          value={newUsername}
           onFocus={() => setIsExistUserMessage('')}
           onChange={(e) => {
             handleChangeUsername(e);
@@ -125,7 +134,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
         <button
           onClick={() => {
             setIsExistUserMessage('');
-            setUsername(userData.name);
+            setUsername(username);
             setIsEditedName(!isEditedName);
           }}
         >
@@ -149,6 +158,7 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
   return (
     <>
       <p>Jugador:</p>
+      <h2 id="error_token">{messageTokenExpired}</h2>
       <h3>{username}</h3>
       {isExistUserMessage}
       {resultRolls && (
@@ -158,8 +168,8 @@ const GamePage: React.FC<GamePageProps> = ({ userData, returnMainPage }) => {
           <p>Dado 2: {resultRolls.dice2}</p>
           <p>
             {resultRolls.isWinner
-              ? 'Partida Ganada!!!'
-              : 'Partida Perdida... Sigue probando!'}
+              ? 'Partida ganada!!!'
+              : 'Partida perdida... Sigue probando!'}
           </p>
         </>
       )}

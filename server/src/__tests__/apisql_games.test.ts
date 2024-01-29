@@ -1,6 +1,10 @@
 import request from 'supertest';
-import { app } from '../mysql/endpoints';
-import { prisma } from '../mysql/endpoints';
+import jwt from 'jsonwebtoken';
+import { app } from '../mysql/app';
+import { PrismaClient } from '../../prisma/generated/client';
+
+const secretKey = process.env.SECRET || 'secret_word';
+const prisma = new PrismaClient();
 
 describe('Pruebas para el endpoint POST /games/:id', () => {
   // Limpiar entidades despues de todas las pruebas
@@ -23,7 +27,18 @@ describe('Pruebas para el endpoint POST /games/:id', () => {
       },
     });
 
-    const response = await request(app).post(`/games/${createdPlayer.id}`);
+    const token = jwt.sign(
+      {
+        id: createdPlayer.id,
+        name: createdPlayer.name,
+      },
+      secretKey,
+      { expiresIn: '3m' }
+    );
+
+    const response = await request(app)
+      .post(`/games/${createdPlayer.id}`)
+      .set('Authorization', `Bearer ${token}`);
 
     const storedRoll = await prisma.roll.findUnique({
       where: {
@@ -38,7 +53,24 @@ describe('Pruebas para el endpoint POST /games/:id', () => {
   });
 
   it('Debería devolver error interno del servidor', async () => {
-    const response = await request(app).post('/games/9999');
+    const createdPlayer = await prisma.player.create({
+      data: {
+        name: 'NuevoJugador2',
+      },
+    });
+
+    const token = jwt.sign(
+      {
+        id: createdPlayer.id,
+        name: createdPlayer.name,
+      },
+      secretKey,
+      { expiresIn: '3m' }
+    );
+
+    const response = await request(app)
+      .post('/games/9999')
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.statusCode).toBe(500);
     expect(response.body).toHaveProperty(
@@ -69,8 +101,19 @@ describe('Pruebas para el endpoint GET /games/:id', () => {
       },
     });
 
+    const token = jwt.sign(
+      {
+        id: createdPlayer.id,
+        name: createdPlayer.name,
+      },
+      secretKey,
+      { expiresIn: '3m' }
+    );
+
     // Realizar una tirada
-    await request(app).post(`/games/${createdPlayer.id}`);
+    await request(app)
+      .post(`/games/${createdPlayer.id}`)
+      .set('Authorization', `Bearer ${token}`);
 
     // Obtener la lista de tiradas del jugador
     const response = await request(app).get(`/games/${createdPlayer.id}`);
@@ -84,7 +127,7 @@ describe('Pruebas para el endpoint GET /games/:id', () => {
       playerId: expect.any(Number),
     };
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(201);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toMatchObject(rollSchema);
   });

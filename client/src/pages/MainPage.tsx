@@ -5,6 +5,7 @@ import PlayerTable from '../components/PlayersTable';
 type UserDataInterface = {
   id: number;
   name: string;
+  token: string;
 };
 
 interface CreateUserPageProps {
@@ -32,9 +33,15 @@ const CreateUserPage: React.FC<CreateUserPageProps> = ({
       const response = await axios.post('http://localhost:3000/players', {
         name: username,
       });
+
+      // Guarda el token en el localStorage
+      const userToken = response.data.token;
+      localStorage.setItem('userToken', userToken);
+
       handleUserData({
-        id: response.data.id,
-        name: response.data.name,
+        id: response.data.player.id,
+        name: response.data.player.name,
+        token: userToken,
       });
 
       onUserCreation();
@@ -44,7 +51,6 @@ const CreateUserPage: React.FC<CreateUserPageProps> = ({
         setIsExistUserMessage(error.response?.data.message);
         console.log(error.response?.data.message);
       } else {
-        // Manejar otros tipos de errores
         console.error('Error en la llamada a la API:', error);
       }
     }

@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
 
-import { PrismaClient } from '../../prisma/generated/client/';
+import { PrismaClient } from '../../prisma/generated/client';
 
 export const app = express();
 
@@ -9,6 +10,8 @@ app.use(cors());
 app.use(express.json());
 
 export const prisma = new PrismaClient();
+
+const secretKey = process.env.SECRET || 'secreto!';
 
 /**
  * Endpoints players
@@ -29,16 +32,29 @@ app.post('/players', async (req, res) => {
     });
 
     if (!existingPlayer) {
-      // Si no existe el jugador crea un nuevo jugador
+      // Si no existe el jugador, crea un nuevo jugador
       const newPlayer = await prisma.player.create({
         data: {
           name: name.trim() || 'ANONIMO',
         },
       });
-      res.status(200).send(newPlayer);
-      return;
+
+      // Genera un nuevo token y envíalo en la respuesta
+      const newToken = jwt.sign(
+        {
+          id: newPlayer.id,
+          name: newPlayer.name,
+        },
+        secretKey,
+        { expiresIn: '30m' }
+      );
+
+      res.status(200).send({ player: newPlayer, token: newToken });
+    } else {
+      res
+        .status(400)
+        .send({ message: 'Ya existe un jugador con este nombre!' });
     }
-    res.status(400).send({ message: 'Ya existe un jugador con este nombre!' });
   } catch (error) {
     res
       .status(500)
@@ -47,11 +63,13 @@ app.post('/players', async (req, res) => {
 });
 
 // Endpoint para cambiar nombre de jugador
-app.put('/players/:id', async (req, res) => {
-  try {
-    const playerId = Number(req.params.id);
-    const { name } = req.body;
 
+app.put('/players/:id', async (req, res) => {
+  const playerId = Number(req.params.id);
+  const { name } = req.body;
+  const token = req.headers.authorization?.split(' ')[1];
+
+  try {
     // Verifica si el jugador existe antes de intentar actualizarlo
     const existingPlayer = await prisma.player.findUnique({
       where: {
@@ -81,17 +99,31 @@ app.put('/players/:id', async (req, res) => {
         .send({ error: 'Ya existe un jugador con este nombre!' });
     }
 
-    // Actualiza el nombre del jugador en la base de datos
-    const updatedPlayer = await prisma.player.update({
-      where: {
-        id: playerId,
-      },
-      data: {
-        name: name || 'ANONIMO',
-      },
-    });
+    // Ahora que sabemos que el jugador existe y no hay conflictos, verificamos el token
+    try {
+      if (!token) {
+        throw new Error('Token no proporcionado');
+      }
 
-    res.send(updatedPlayer);
+      jwt.verify(token, secretKey);
+
+      // Ahora que el token es válido, actualiza el nombre del jugador en la base de datos
+      const updatedPlayer = await prisma.player.update({
+        where: {
+          id: playerId,
+        },
+        data: {
+          name: name || 'ANONIMO',
+        },
+      });
+
+      res.send(updatedPlayer);
+    } catch (err) {
+      console.error('Error al verificar el token:', err);
+      return res
+        .status(401)
+        .send({ error: 'Token inválido, ya no puedes jugar con este usuario' });
+    }
   } catch (error) {
     res
       .status(500)
@@ -100,7 +132,21 @@ app.put('/players/:id', async (req, res) => {
 });
 
 // Endpoint para devolver lista jugadores con porcentaje de exitos:
-app.get('/players', async (_req, res) => {
+app.get('/players', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  try {
+    if (!token) {
+      throw new Error('Token no proporcionado');
+    }
+    jwt.verify(token, secretKey);
+  } catch (error) {
+    console.error('Error al verificar el token:', error);
+    return res
+      .status(401)
+      .send({ error: 'Token inválido, ya no puedes jugar con este usuario' });
+  }
+
   type RollType = {
     dice1: number;
     dice2: number;
