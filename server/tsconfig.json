@@ -11,11 +11,13 @@
     "removeComments": true,
     "baseUrl": "./",
     "typeRoots": ["./node_modules/@types"],
+    "types": ["jest"],
     "paths": {
       "*": ["./src/*"]
     }
   },
-  "include": ["./src/**/*", "./generated/**/*"],
+
+  "include": ["./src/**/*", "./generated/**/*", "express.d.ts"],
   "exclude": [
     "node_modules",
     "dist",
