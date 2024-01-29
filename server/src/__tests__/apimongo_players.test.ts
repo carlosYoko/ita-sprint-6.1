@@ -8,7 +8,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 let server: MongoMemoryServer
 
 const user1 = {
-    name: "Marlon Bundo",
+    name: "Marlon Bundo.",
 }
 
 const user2 = {
