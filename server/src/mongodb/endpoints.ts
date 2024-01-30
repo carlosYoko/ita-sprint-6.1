@@ -68,7 +68,7 @@ app.put("/players/:id", async (req, res) => {
       const updatedPlayer = await UserModel.findOneAndUpdate({
         name: trimmedName,
       });
-      res.send(`The name has been updated to: "${trimmedName}"`);
+      res.send({message: `The name has been updated to: "${trimmedName}"`});
 
       return;
     }
