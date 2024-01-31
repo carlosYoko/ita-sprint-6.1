@@ -13,6 +13,7 @@
     "test:sql-players": "npx jest apisql_players.test.ts",
     "test:sql-ranking": "npx jest apisql_ranking.test.ts",
     "test:mongodb-players": "npx jest apimongo_players.test.ts",
+    "test:mongodb-games": "npx jest apimongo_games.test.ts",
     "docker": "docker-compose up",
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",

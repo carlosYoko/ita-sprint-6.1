@@ -7,7 +7,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 
 let server: MongoMemoryServer
 
-describe('Tests for the /POST method of the endpoint player', () => {
+describe('Tests for the /POST method of the endpoint players', () => {
     beforeAll(async () => {
         try {
             server = await MongoMemoryServer.create();
@@ -105,5 +105,66 @@ describe('Tests for the /PUT method of the endpoint players', () => {
 
         expect(response.statusCode).toBe(400);
         expect(response.body).toEqual({error: "The username is already taken!"});
+    });
+});
+
+describe('Tests for the /GET method of the endpoint players', () => {
+    beforeAll(async () => {
+        try {
+            server = await MongoMemoryServer.create();
+            await mongoConnection(server.getUri())
+        } catch (error) {
+            console.error(error)
+        }
+    });
+    
+    afterAll(async () => {
+        await mongoose.connection.close();
+        await server.stop();
+    });
+    
+    it('should return all the current players succes rate and display an specific message if one has not won yet', async () => {
+
+
+        await RollsModel.create({
+            "dice1": 2,
+            "dice2": 3,
+            "isWin": false,
+            "userId": 1,
+        },
+        {
+            "dice1": 4,
+            "dice2": 3,
+            "isWin": true,
+            "userId": 1,
+        },{
+            "dice1": 2,
+            "dice2": 3,
+            "isWin": false,
+            "userId": 2,
+        })
+
+        await UserModel.create({
+            "userId": "1",
+            "name": "Marlon Bundo"
+        },{
+            "userId": "2",
+            "name": "Pipkin"
+        })
+
+        const response = await request(app).get("/players")
+
+        expect(response.body).toEqual([
+                {
+                    id: 2,
+                    name: "Pipkin",
+                    successPercentage: "No victories yet",
+                },
+                {
+                    id: 1,
+                    name: "Marlon Bundo",
+                    successPercentage: "50%",
+                }
+            ]);
     });
 });
