@@ -134,7 +134,7 @@ app.get("/players", async (_req, res) => {
         };
     })
 
-    res.send({ playersWithWinRate });
+    res.send(playersWithWinRate);
   } catch (error) {
     res.status(500).send({ message: "Internal server error", error: error });
   }
